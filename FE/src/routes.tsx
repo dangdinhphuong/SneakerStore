@@ -50,6 +50,7 @@ import Blogtintuc from "./pages/layout/Users/Blog/Blogtintuc";
 import Shop_Products from "./pages/layout/Users/Shop-Products/Shop_Products";
 import Detail_Product from "./pages/layout/Users/Detail-Product/Detail_Product";
 import Cart from "./pages/layout/Users/Cart/cart";
+import Payment from "./pages/layout/Users/Payment";
 import Orderr from "./pages/layout/Users/order/Order";
 import ListCategory from "./pages/layout/Users/List-Category/ListCategory";
 import Signin from "./pages/layout/Users/Signin/signin";
@@ -119,6 +120,10 @@ export const routers = createBrowserRouter([
         element: <Detail_category />,
       },
 
+      {
+        path: "/payment",
+        element: <Payment />,
+      },
       {
         path: "/cart",
         element: <Cart />,
@@ -214,7 +219,7 @@ export const routers = createBrowserRouter([
         path: "tintuc/detailtintuc/:id",
         element: <Detailtintuc />,
       },
-      
+
 
       {
         path: "imagetintuc",

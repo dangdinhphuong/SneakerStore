@@ -4,42 +4,43 @@ import Product from "../models/product";
 import {productSchema, UpdateProduct} from "../Schema/product";
 import * as functions from "../service/functions.js";
 // đặt hàng
-export const OrderUser = async (req, res, next) => {
-    try {
-        let {address, phone, id_user, id_product} = req.body;
-        if (!address) return functions.setError(res, "Vui lòng nhập vào địa chỉ", 400);
-        if (!phone) return functions.setError(res, "Vui lòng nhập vào số điện thoại", 400);
-        if (!id_product) return functions.setError(res, "Vui lòng nhập vào id sản phẩm", 400);
-        if (!address) return functions.setError(res, "Vui lòng nhập vào iid người mua", 400);
+    export const OrderUser = async (req, res, next) => {
+        try {
+            let { address, phone, id_user, id_product } = req.body;
 
-        if (id_user && id_product && phone && address) {
-            let checkId = await Orders.findOne({}, {id_order: 1}).sort({id_order: -1}).lean();
-            let id_order = checkId ? checkId.id_order + 1 : 1;
+            // Kiểm tra dữ liệu đầu vào
+            if (!address) return functions.setError(res, "Vui lòng nhập vào địa chỉ", 400);
+            if (!phone) return functions.setError(res, "Vui lòng nhập vào số điện thoại", 400);
+            if (!id_user) return functions.setError(res, "Vui lòng nhập vào id người mua", 400);
+            if (!id_product) return functions.setError(res, "Vui lòng nhập vào id sản phẩm", 400);
 
-            console.log('Creating Order with ID:', id_order);
+            // Kiểm tra dữ liệu đầu vào có hợp lệ không
+            if (id_user && id_product && phone && address) {
+                // Tìm ID lớn nhất hiện tại để tạo ID mới cho đơn hàng
+                let checkId = await Orders.findOne({}, { id_order: 1 }).sort({ id_order: -1 }).lean();
+                let id_order = checkId ? checkId.id_order + 1 : 1;
 
-            await Orders.create({
-                id_order,
-                address,
-                phone,
-                user_id: id_user,
-                products,
-                status: "pending",
-                total_price,
-                sale_id,
-            });
+                console.log('Creating Order with ID:', id_order);
 
-            return functions.success(res, `Đặt hàng thành công với id_order: ${id_order}`);
-        }
-    catch
-        (error)
-        {
+                // Tạo đơn hàng
+                await Orders.create({
+                    id_order,
+                    address,
+                    phone,
+                    user_id: id_user,
+                    products: [], // Bạn cần cung cấp một mảng products hợp lệ
+                    status: "pending",
+                    total_price: 0, // Bạn cần cung cấp một giá trị total_price hợp lệ
+                    sale_id: null, // Bạn cần cung cấp một giá trị sale_id hợp lệ
+                });
+
+                return functions.success(res, `Đặt hàng thành công với id_order: ${id_order}`);
+            }
+        } catch (error) {
             console.error('Error in OrderUser:', error);
             return functions.setError(res, error.message);
         }
-        return functions.setError(res, error.message);
-    }
-    ;
+    };
 
 // get order
     export const getAll = async (req, res) => {
@@ -78,18 +79,6 @@ export const OrderUser = async (req, res, next) => {
                 },
             },
             {
-                $project: {
-                    user_id: 1,
-                    status: 1,
-                    total_price: 1,
-                    createdAt: 1,
-                    updatedAt: 1,
-                    payment: 1,
-                    product: {$arrayElemAt: ["$product", 0]},
-                    quantity: "$products.quantity",
-                },
-            },
-            {
                 $group: {
                     _id: {
                         _id: "$_id",
@@ -104,6 +93,18 @@ export const OrderUser = async (req, res, next) => {
                     products: {
                         $push: {product: "$product", quantity: "$quantity"},
                     },
+                },
+            },
+            {
+                $project: {
+                    user_id: 1,
+                    status: 1,
+                    total_price: 1,
+                    createdAt: 1,
+                    updatedAt: 1,
+                    payment: 1,
+                    product: {$arrayElemAt: ["$product", 0]},
+                    quantity: "$products.quantity",
                 },
             },
             {
@@ -199,7 +200,7 @@ export const OrderUser = async (req, res, next) => {
 
             return res.status(200).json({
                 message: "Create order successfully",
-                data: newOrder.products,
+                data: order._id,
             });
         } catch (error) {
             res.status(500).json({error: true, message: error.message});
@@ -248,5 +249,30 @@ export const OrderUser = async (req, res, next) => {
             return functions.success(res, "update data success", {data});
         } catch (error) {
             return functions.setError(res, error.message);
+        }
+    };
+
+    export const getOrderById = async (req, res) => {
+        try {
+            const orderId = req.params.id; // Giả sử ID đơn hàng được truyền qua đường dẫn
+
+            // Sử dụng Mongoose để truy vấn đơn hàng theo ID và điền thông tin sản phẩm
+            const order = await Orders.findById(orderId).populate({
+                path: 'products.product',
+                model: 'Product',
+            });
+
+            if (!order) {
+                return res.status(404).json({
+                    error: true,
+                    message: `Order with ID ${orderId} not found`,
+                });
+            }
+
+            // Trả về kết quả
+            return res.status(200).json(order);
+        } catch (error) {
+            console.error('Error in getOrderById:', error);
+            return res.status(500).json({ error: true, message: error.message });
         }
     };

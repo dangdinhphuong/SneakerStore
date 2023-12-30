@@ -12,7 +12,7 @@ const Orders = new mongoose.Schema(
             required: true,
         },
         products: [{
-            product_id: {type: mongoose.Types.ObjectId, required: true},
+            product_id: {type: mongoose.Types.ObjectId,ref: 'Product', required: true},
             color: {
                 type: String,
             },
