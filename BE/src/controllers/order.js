@@ -252,27 +252,27 @@ import * as functions from "../service/functions.js";
         }
     };
 
-    export const getOrderById = async (req, res) => {
-        try {
-            const orderId = req.params.id; // Giả sử ID đơn hàng được truyền qua đường dẫn
+export const getOrderById = async (req, res) => {
+    try {
+        const orderId = req.params.id; // Giả sử ID đơn hàng được truyền qua đường dẫn
 
-            // Sử dụng Mongoose để truy vấn đơn hàng theo ID và điền thông tin sản phẩm
-            const order = await Orders.findById(orderId).populate({
-                path: 'products.product',
-                model: 'Product',
+        // Sử dụng Mongoose để truy vấn đơn hàng theo ID và điền thông tin sản phẩm
+        const order = await Orders.findById(orderId).populate({
+            path: 'products.product',
+            model: 'Product',
+        });
+
+        if (!order) {
+            return res.status(404).json({
+                error: true,
+                message: `Order with ID ${orderId} not found`,
             });
-
-            if (!order) {
-                return res.status(404).json({
-                    error: true,
-                    message: `Order with ID ${orderId} not found`,
-                });
-            }
-
-            // Trả về kết quả
-            return res.status(200).json(order);
-        } catch (error) {
-            console.error('Error in getOrderById:', error);
-            return res.status(500).json({ error: true, message: error.message });
         }
-    };
+
+        // Trả về kết quả
+        return res.status(200).json(order);
+    } catch (error) {
+        console.error('Error in getOrderById:', error);
+        return res.status(500).json({ error: true, message: error.message });
+    }
+};
