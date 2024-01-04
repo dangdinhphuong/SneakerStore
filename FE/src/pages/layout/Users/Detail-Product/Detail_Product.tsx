@@ -19,6 +19,7 @@ const Detail_Product = () => {
     const { data: product, isLoading } = useGetProductByIdQuery(String(id));
     const [selectedColor, setSelectedColor] = useState(null);
     const [selectedSize, setSelectedSize] = useState(null);
+    const [countQuanytity,setCountQuanytity] =  useState(null);
     const dispatch = useAppDispatch();
 
     const handleCountDowQuantity = () => {
@@ -27,32 +28,31 @@ const Detail_Product = () => {
         }
     };
 
-    const handleQuanTity = (item: any) => {
+    const handleCountQuanTity = (item: any) => {
         let currentQauntity = 0;
-        carts.forEach((item: any) => {
-            console.log(item.product._id);
-            if(item.product?._id == id ){
-                currentQauntity = item.quantity;
+        carts.forEach((cart: any) => {
+            if(cart.product?._id == id ){
+                currentQauntity = cart.quantity;
             }
         });               
+        setCountQuanytity(item.quantity - currentQauntity);    
         setSelectedSize(selectedSize === item ? null : item);
     };
 
     const handleIncreaseQuantity = () => {
-        if (quantity < selectedSize.quantity) {
+        if (quantity < countQuanytity) {
             setQuantity(quantity + 1);
         } else {
             toast.
-                error("Số lượng sản phẩm trong kho không đủ");
+                warning("Số lượng sản phẩm trong kho không đủ");
         }
     };
 
     // Tôi k biết mấy bạn lam size màu kiểu gì, lên fix tạm mấy bạn vô sửa đoạn đây
     const handleAddProductToCart = () => {
         if (!product?.product) return;
-
         const _product = product.product;
-        // console.log(_product);
+        
         if (!selectedColor || !selectedSize) {
             Swal.fire({
                 icon: 'error',
@@ -72,6 +72,8 @@ const Detail_Product = () => {
         const infoCart = {
             _id: _product._id,
             maxSize: selectedSize.quantity,
+            nameSize: selectedSize.nameSize,
+            nameColor: selectedSize.nameColor,
             quantity,
             product: {
                 _id: _product._id,
@@ -88,12 +90,11 @@ const Detail_Product = () => {
             // Note
 
         };
-        console.log(infoCart);
 
+        setCountQuanytity(countQuanytity - 1);
         dispatch(addProductToCart(infoCart as any));
         toast.success("Thêm sản phẩm vào giỏ hàng thành công");
         // addProductToCart()
-        setQuantity(quantity - 1);
 
         // Update the remaining quantity of the product
         _product.listQuantityRemain = _product.listQuantityRemain.map((item: any) => {
@@ -199,7 +200,7 @@ const Detail_Product = () => {
                                     <ul className="flex flex-row items-start gap-2">
                                         <h2 className="text-lg font-medium">Size :</h2>
                                         {product?.product.listQuantityRemain.filter(item => !selectedColor || item.colorHex === selectedColor.colorHex).map((item: any, index: number) => (
-                                            <li key={index} className="flex items-center gap-2" onClick={() => handleQuanTity(item)}>
+                                            <li key={index} className="flex items-center gap-2" onClick={() => handleCountQuanTity(item)}>
                                                 <div className="w-7 h-7 border border-gray-500 flex items-center justify-center">{item.nameSize}</div>                {selectedSize === item && <CheckOutlined />}
                                             </li>
                                         ))}
@@ -222,10 +223,10 @@ const Detail_Product = () => {
                                                     +
                                                 </button>
                                             </div>
-                                            {selectedSize && (
+                                            {countQuanytity && (
                                                 <div className="available-quantity flex items-center gap-5">
                                                     <h2 className="text-lg font-medium">Số lượng có sẵn:</h2>
-                                                    <div>{selectedSize.quantity}</div>
+                                                    <div>{countQuanytity}</div>
                                                 </div>
                                             )}
                                         </div>
