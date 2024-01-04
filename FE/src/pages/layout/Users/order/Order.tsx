@@ -2,7 +2,7 @@ import { useNewOrderMutation } from "@/api/order";
 import { createPaymentUrl, useNewPaymentMutation } from "@/api/payment";
 import { useDecreaseSaleMutation, useGetAllSalesQuery } from "@/api/sale/sale.api";
 import { removeMultiplePrdCart } from "@/store/cart/cart.slice";
-import { useAppDispatch } from "@/store/hook";
+import { useAppDispatch , useAppSelector } from "@/store/hook";
 import { ISale } from "@/types";
 import { Input } from "antd";
 import clsx from "clsx";
@@ -12,6 +12,8 @@ import { toast } from "react-toastify";
 import Swal from "sweetalert2";
 
 const Orderr = () => {
+    const initialCarts = useAppSelector((state: RootState) => state.cart.cart);
+    const [carts, setCarts] = useState(initialCarts);
     const [selectedSale, setSelectedSale] = useState<ISale>({} as any);
     const [paymentMethod, setPaymentMethod] = useState<"cash" | "banking">("banking");
     const [infoCart, setInfoCart] = useState<any>([]);
@@ -69,7 +71,7 @@ const Orderr = () => {
                         const infoOrder = {
                             // Laays id user danwg nhap
                             user_id: "65465224dc28e240806b6c74",
-                            address: address||'dia chi',
+                            address: address || 'dia chi',
                             payment_id: newPaymentResult.data._id,
                             products: infoCart?.cartSelected?.map((cart: any) => ({ product_id: cart._id, quantity: cart.quantity })) || [],
                             total_price: infoCart?.totalPrice - saleMoney || 0,
@@ -110,7 +112,7 @@ const Orderr = () => {
             if (paymentId) {
                 const infoOrder = {
                     user_id: "65465224dc28e240806b6c74",
-                    address: address||'dia chi',
+                    address: address || 'dia chi',
                     payment_id: paymentId,
                     products: infoCart?.cartSelected?.map((cart: any) => ({ product_id: cart._id, quantity: cart.quantity })) || [],
                     total_price: infoCart?.totalPrice - saleMoney || 0,
@@ -254,34 +256,39 @@ const Orderr = () => {
                                     </th>
                                 </tr>
                             </thead>
-
                             <tbody className="divide-y divide-gray-200 ">
-                                {infoCart?.cartSelected?.map((cart: any) => (
-                                    <tr className="" key={cart._id}>
+                                {carts?.map((cart, index) => (
+                                    <tr key={index}>
                                         <td className="whitespace-nowrap font-medium text-gray-900 flex text-left py-4">
-                                            <div className="relative w-[200px]">
-                                                <img className="w-full h-auto lg:w-40 object-cover md:w-40" src={cart?.product?.image[0]} alt="" />
-                                                <span className="text-xs absolute top-0 right-0 bg-green-400 p-1 text-white rounded-full hidden sm:block">
-                                                    50% OFF
-                                                </span>
+                                            <div className="relative">
+                                                <img src={cart.product.image[0]} className="w-full h-auto lg:w-40 object-cover md:w-40" alt="" />
                                             </div>
                                         </td>
-                                        <td className="whitespace-nowrap  text-gray-700 py-4 ">
-                                            <div className=" items-center ">
-                                                <p className="text-xs lg:text-xl md:text-xl">{cart.product.name}</p>
+                                        <td className="whitespace-nowrap text-gray-700 p-2 ">
+                                            <div className="items-center ">
+                                                <p className="text-xs lg:text-base">{cart.product.name}</p>
                                                 <div className="flex items-center gap-1">
-                                                    <span className="text-xs lg:text-base md:text-xl ">Màu:</span>
-                                                    <span className=" bg-yellow-500 flex  gap-3 rounded-full w-4 h-4 opacity-70"></span>
+                                                    <div className="text-xs lg:text-base md:text-xl flex items-center"><p>Màu:</p> <div className='rounded-full' style={{ backgroundColor: cart.product.listQuantityRemain?.find((item) => item.color === cart.color)?.colorHex, width: 20, height: 20 }} ></div></div>
                                                 </div>
                                             </div>
-                                            <span className="  gap-3 text-xs lg:text-base md:text-xl">Size: S</span>
+                                            <span className="gap-3 text-xs lg:text-base md:text-xl">
+                                                Kích cỡ :{
+                                                    cart.product.listQuantityRemain?.find((item) => item.color === cart.color)?.nameSize
+                                                }
+                                            </span>
                                         </td>
-                                        <td className="whitespace-nowrap text-gray-700 py-4 px-4">{cart.quantity}</td>
-                                        <td className=" whitespace-nowrap  text-gray-700  text-xs lg:text-xl md:text-xl py-4 px-1 ">
-                                            ${cart.product.price?.toLocaleString()}
+                                        <td className="whitespace-nowrap text-gray-700 py-4">
+                                            <div className="flex items-center text-xs lg:text-xl">
+                                                <div className="input-number flex items-center">
+                                                   {cart.quantity}
+                                                </div>
+                                            </div>
                                         </td>
-                                        <td className=" whitespace-nowrap  text-gray-700  text-xs lg:text-xl md:text-xl py-4 px-1 ">
-                                            ${(cart.product.price * cart.quantity)?.toLocaleString()}
+                                        <td className=" whitespace-nowrap  text-gray-700  text-xs md:text-base py-4 ">
+                                            {cart.product.price?.toLocaleString()} VNĐ
+                                        </td>
+                                        <td className=" whitespace-nowrap  text-gray-700  text-xs md:text-base py-4 ">
+                                            {(cart.product.price * cart.quantity).toLocaleString()} VNĐ
                                         </td>
                                     </tr>
                                 ))}

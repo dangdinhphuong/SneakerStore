@@ -5,14 +5,15 @@ import { Link, useParams } from "react-router-dom";
 import ImagePriview from "../../../../components/Image/ImagePriview";
 import Comment from "../../../../components/admin/comment/Comment";
 import "./Detail_Products.css";
-import { useState } from "react";
-import { useAppDispatch } from "@/store/hook";
+import { useEffect, useState } from "react";
+import { useAppDispatch , useAppSelector } from "@/store/hook";
 import { addProductToCart } from "@/store/cart/cart.slice";
 import { toast } from "react-toastify";
 import { Button, Radio } from "antd";
 import { CheckOutlined } from '@ant-design/icons';
 import Swal from 'sweetalert2';
 const Detail_Product = () => {
+    const [carts, setCarts] = useState(useAppSelector((state: RootState) => state.cart.cart));
     const [quantity, setQuantity] = useState<number>(1);
     const { id } = useParams<{ id: string }>(); // Get the product id from the URL parameters
     const { data: product, isLoading } = useGetProductByIdQuery(String(id));
@@ -23,9 +24,18 @@ const Detail_Product = () => {
     const handleCountDowQuantity = () => {
         if (quantity > 1) {
             setQuantity(quantity - 1);
-
         }
+    };
 
+    const handleQuanTity = (item: any) => {
+        let currentQauntity = 0;
+        carts.forEach((item: any) => {
+            console.log(item.product._id);
+            if(item.product?._id == id ){
+                currentQauntity = item.quantity;
+            }
+        });               
+        setSelectedSize(selectedSize === item ? null : item);
     };
 
     const handleIncreaseQuantity = () => {
@@ -61,6 +71,7 @@ const Detail_Product = () => {
         }
         const infoCart = {
             _id: _product._id,
+            maxSize: selectedSize.quantity,
             quantity,
             product: {
                 _id: _product._id,
@@ -72,8 +83,6 @@ const Detail_Product = () => {
                         item
                     ))
                 ,
-
-
                 // Note
             },
             // Note
@@ -113,14 +122,14 @@ const Detail_Product = () => {
                         </ul>
                     </div>
                     {/* name và rating */}
-                    <div className="name-rating mt-8 md:mt-10">
+                    <div className="name-rating mt-8 md:mt-2">
                         <div className="name-product mt-3">
                             <h1 className="title-name uppercase font-medium text-[#282828] text-2xl">{product?.product.name}</h1>
                         </div>
                     </div>
                     {/* Slide và content */}
 
-                    <div className="slider-text-content min-w-full  flex flex-col gap-5 mt-8 md:mt-10 md:flex-row justify-between  ">
+                    <div className="slider-text-content min-w-full  flex flex-col gap-5 mt-8 md:mt-3 md:flex-row justify-between  ">
                         {/* slider */}
                         <div className="slider w-full md:w-2/5 relative overflow-hidden ">
                             <img src={product?.product.image[0]} alt="" />
@@ -153,7 +162,7 @@ const Detail_Product = () => {
                                 <h2 className="text-lg font-medium">Thông tin sản phẩm</h2>
                                 <p className="break-words mt-3 text-base text-[#282828]">{product?.product.description}</p>
                             </div>
-                            <hr className="bg-gray-300 h-1 mx-auto my-20" />
+                            <hr className="bg-gray-300 h-1 mx-auto my-4" />
                             {/* Status */}
                             {/* Options */}
                             <div className="options">
@@ -190,7 +199,7 @@ const Detail_Product = () => {
                                     <ul className="flex flex-row items-start gap-2">
                                         <h2 className="text-lg font-medium">Size :</h2>
                                         {product?.product.listQuantityRemain.filter(item => !selectedColor || item.colorHex === selectedColor.colorHex).map((item: any, index: number) => (
-                                            <li key={index} className="flex items-center gap-2" onClick={() => setSelectedSize(selectedSize === item ? null : item)}>
+                                            <li key={index} className="flex items-center gap-2" onClick={() => handleQuanTity(item)}>
                                                 <div className="w-7 h-7 border border-gray-500 flex items-center justify-center">{item.nameSize}</div>                {selectedSize === item && <CheckOutlined />}
                                             </li>
                                         ))}
