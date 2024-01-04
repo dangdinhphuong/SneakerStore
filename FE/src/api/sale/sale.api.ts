@@ -18,6 +18,12 @@ const saleApi = createApi({
             }),
             keepUnusedDataFor: 0,
         }),
+        getSaleByCode: builder.query<{ data: ISale }, string>({
+            query: (code) => ({
+                url: "/api/sales/get-by-code" + code,
+            }),
+            keepUnusedDataFor: 0,
+        }),
         newSale: builder.mutation<{ data: ISale; message: string }, ISale>({
             query: (data) => ({
                 url: "/api/sales",
@@ -56,6 +62,6 @@ const saleApi = createApi({
     }),
 });
 
-export const { useGetAllSalesQuery, useGetSaleByIdQuery, useDecreaseSaleMutation, useNewSaleMutation, useUpdateSaleMutation, useRemoveSaleMutation } =
+export const { useGetAllSalesQuery, useGetSaleByIdQuery,  useGetSaleByCodeQuery, useDecreaseSaleMutation, useNewSaleMutation, useUpdateSaleMutation, useRemoveSaleMutation } =
     saleApi;
 export default saleApi;

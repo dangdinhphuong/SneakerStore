@@ -29,6 +29,7 @@ const Orders = new mongoose.Schema(
         },
         reason: {type: String},
         total_price: Number,
+        total_amount_paid: {type: Number, default: 0},
     },
     {
         timestamps: true,

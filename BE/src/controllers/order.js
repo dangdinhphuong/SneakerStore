@@ -329,6 +329,8 @@ export const getOrderById = async (req, res) => {
                     payment: 1,
                     product: {$arrayElemAt: ["$product", 0]},
                     quantity: "$products.quantity",
+                    color: "$products.color",
+                    size: "$products.size",
                     user: {$arrayElemAt: ["$user", 0]},
                 },
             },
@@ -345,7 +347,11 @@ export const getOrderById = async (req, res) => {
                         updatedAt: "$updatedAt",
                     },
                     products: {
-                        $push: {product: "$product", quantity: "$quantity"},
+                        $push: { product: "$product",
+                         quantity: "$quantity" ,
+                         color: "$color" ,
+                         size: "$size" 
+                        },
                     },
                     user: {$first: "$user"},
                 },
