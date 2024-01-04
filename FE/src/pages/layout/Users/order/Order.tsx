@@ -2,7 +2,7 @@ import { useNewOrderMutation } from "@/api/order";
 import { createPaymentUrl, useNewPaymentMutation } from "@/api/payment";
 import { useDecreaseSaleMutation, useGetAllSalesQuery, useGetSaleByCodeQuery } from "@/api/sale/sale.api";
 import { removeMultiplePrdCart } from "@/store/cart/cart.slice";
-import { useAppDispatch , useAppSelector } from "@/store/hook";
+import { useAppDispatch } from "@/store/hook";
 import { ISale } from "@/types";
 import { Button, Popconfirm, Input } from "antd";
 import clsx from "clsx";
@@ -11,10 +11,10 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import Swal from "sweetalert2";
 import axios from 'axios';
+const userString = localStorage.getItem("user");
+const user = userString ? JSON.parse(userString) : {};
 
 const Orderr = () => {
-    const initialCarts = useAppSelector((state: RootState) => state.cart.cart);
-    const [carts, setCarts] = useState(initialCarts);
     const [selectedSale, setSelectedSale] = useState<ISale>({} as any);
     const [paymentMethod, setPaymentMethod] = useState<"cash" | "banking">("banking");
     const [infoCart, setInfoCart] = useState<any>([]);
@@ -40,7 +40,7 @@ const Orderr = () => {
         setShouldShowDiscountButton(!shouldShowDiscountButton);
         return setSelectedSale({} as any);
     };
-    
+
     const addVoucher = async () => {
         if (voucherValue && voucherValue !== '') {
             try {
@@ -65,7 +65,35 @@ const Orderr = () => {
             }
         }
     };
+    const formatPaymentOrder = () => {
 
+        let transformedArray = infoCart?.cartSelected.map(item => {
+            return {
+                "product_id": item.product._id,
+                "color": item.product.listQuantityRemain[0].colorHex,
+                "size": item.product.listQuantityRemain[0].nameSize,
+                "quantity": item.quantity
+            };
+        });
+
+        const dataCreateCart = {
+            "user_id": user._id ?? '',
+            "status": "pending",
+            "products": transformedArray,
+            "total_price": (infoCart?.totalPrice - saleMoney),
+            "address": "Địa chỉ của bạn",
+            "total_amount_paid": 0,
+            "payment_type": "bank",
+        };
+
+        // Kiểm tra xem selectedSale._id có tồn tại không
+        if (selectedSale?._id) {
+            // Nếu tồn tại, thêm sale_id vào dataCreateCart
+            dataCreateCart.sale_id = selectedSale._id;
+        }
+
+        return dataCreateCart;
+    }
     const handlePayment = () => {
 
         Swal.fire({
@@ -80,6 +108,7 @@ const Orderr = () => {
         }).then(async (result) => {
             try {
                 if (result.isConfirmed) {
+
                     if (paymentMethod === "banking") {
                         const infoBanking = {
                             vnp_OrderInfo: "Thanh toán đơn hàng",
@@ -93,35 +122,22 @@ const Orderr = () => {
                         window.open(result.data.url_redirect, "_self");
                     }
 
-                    if (paymentMethod === "cash") {
-                        const infoBanking = {
-                            totalPrice: infoCart?.totalPrice || 0,
-                            // Mấy bạn lấy userId lúc đăng nhập truyên vào
-                            user: "6533936415fe0386e84bf4b9",
-                            payment_method: "cash",
-                            message: "Thanh toan don hang",
-                            status: "pending",
-                        };
-                        const newPaymentResult = await newPayment(infoBanking as any).unwrap();
-                        const infoOrder = {
-                            // Laays id user danwg nhap
-                            user_id: "65465224dc28e240806b6c74",
-                            address: address || 'dia chi',
-                            payment_id: newPaymentResult.data._id,
-                            products: infoCart?.cartSelected?.map((cart: any) => ({ product_id: cart._id, quantity: cart.quantity })) || [],
-                            total_price: infoCart?.totalPrice - saleMoney || 0,
-                        };
-
-                        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-                        const orderResult = await newOrder(infoOrder as any).unwrap();
-                        dispatch(removeMultiplePrdCart(infoCart?.cartSelected?.map((cart: any) => cart._id) as any));
-                        // Cos thể send mail bill ở đây
-                        navigate("/order-history");
-                        toast.success("Đặt hàng thành công");
-                        if (selectedSale._id) {
-                            decreaseSale(selectedSale._id);
+                    if (paymentMethod == "cash") {
+                        const dataCreateOrder = formatPaymentOrder();
+                        console.log('infoCart?.cartSelected2', dataCreateOrder);
+                        const response = await newOrder(dataCreateOrder as any).unwrap();
+                        console.log('infoCart?.cartSelected2', response);
+                        if (response) {
+                            dispatch(removeMultiplePrdCart(infoCart?.cartSelected?.map((cart: any) => cart._id) as any));
+                            // Cos thể send mail bill ở đây
+                            navigate("/order-history");
+                            toast.success("Đặt hàng thành công");
+                            if (selectedSale._id) {
+                                decreaseSale(selectedSale._id);
+                            }
+                            sessionStorage.removeItem("infoPayment");
+                            navigate("/order-history");
                         }
-                        sessionStorage.removeItem("infoPayment");
                     }
                 }
             } catch (error: any) {
@@ -130,13 +146,13 @@ const Orderr = () => {
         });
     };
 
-    const saleMoney = selectedSale?._id
-        ? selectedSale.type === "cash"
-            ? infoCart?.totalPrice - +selectedSale.sale
-            : (infoCart?.totalPrice * +selectedSale.sale) / 100
-        : 0;
+    const saleMoney = 0;
 
     useEffect(() => {
+        if(sessionStorage.getItem("infoPayment") == null){
+            navigate("/");
+        }
+        console.log('xin chào',sessionStorage.getItem("infoPayment"))
         const _infoCart = JSON.parse(sessionStorage.getItem("infoPayment") || "");
         if (_infoCart) setInfoCart(_infoCart);
     }, []);
@@ -144,7 +160,6 @@ const Orderr = () => {
     useEffect(() => {
         const handleNewBooking = async () => {
             const paymentId = searchParams.get("payment_id");
-            console.log('infoCart?.cartSelected',infoCart?.cartSelected)
             if (paymentId) {
                 const infoOrder = {
                     user_id: "65465224dc28e240806b6c74",
@@ -293,39 +308,34 @@ const Orderr = () => {
                                     </th>
                                 </tr>
                             </thead>
+
                             <tbody className="divide-y divide-gray-200 ">
-                                {carts?.map((cart, index) => (
-                                    <tr key={index}>
+                                {infoCart?.cartSelected?.map((cart: any) => (
+                                    <tr className="" key={cart._id}>
                                         <td className="whitespace-nowrap font-medium text-gray-900 flex text-left py-4">
-                                            <div className="relative">
-                                                <img src={cart.product.image[0]} className="w-full h-auto lg:w-40 object-cover md:w-40" alt="" />
+                                            <div className="relative w-[200px]">
+                                                <img className="w-full h-auto lg:w-40 object-cover md:w-40" src={cart?.product?.image[0]} alt="" />
+                                                <span className="text-xs absolute top-0 right-0 bg-green-400 p-1 text-white rounded-full hidden sm:block">
+                                                    50% OFF
+                                                </span>
                                             </div>
                                         </td>
-                                        <td className="whitespace-nowrap text-gray-700 p-2 ">
-                                            <div className="items-center ">
-                                                <p className="text-xs lg:text-base">{cart.product.name}</p>
+                                        <td className="whitespace-nowrap  text-gray-700 py-4 ">
+                                            <div className=" items-center ">
+                                                <p className="text-xs lg:text-xl md:text-xl">{cart.product.name}</p>
                                                 <div className="flex items-center gap-1">
-                                                    <div className="text-xs lg:text-base md:text-xl flex items-center"><p>Màu:</p> <div className='rounded-full' style={{ backgroundColor: cart.product.listQuantityRemain?.find((item) => item.color === cart.color)?.colorHex, width: 20, height: 20 }} ></div></div>
+                                                    <span className="text-xs lg:text-base md:text-xl ">Màu:</span>
+                                                    <span className=" bg-yellow-500 flex  gap-3 rounded-full w-4 h-4 opacity-70" style={{ background: cart.product.listQuantityRemain?.find((item) => item.color === cart.color)?.colorHex }}></span>
                                                 </div>
                                             </div>
-                                            <span className="gap-3 text-xs lg:text-base md:text-xl">
-                                                Kích cỡ :{
-                                                    cart.product.listQuantityRemain?.find((item) => item.color === cart.color)?.nameSize
-                                                }
-                                            </span>
+                                            <span className="  gap-3 text-xs lg:text-base md:text-xl">Size: {cart.product.listQuantityRemain?.find((item) => item.color === cart.color)?.nameSize}</span>
                                         </td>
-                                        <td className="whitespace-nowrap text-gray-700 py-4">
-                                            <div className="flex items-center text-xs lg:text-xl">
-                                                <div className="input-number flex items-center">
-                                                   {cart.quantity}
-                                                </div>
-                                            </div>
+                                        <td className="whitespace-nowrap text-gray-700 py-4 px-4">{cart.quantity}</td>
+                                        <td className=" whitespace-nowrap  text-gray-700  text-xs lg:text-xl md:text-xl py-4 px-1 ">
+                                            {cart.product.price?.toLocaleString()} vnd
                                         </td>
-                                        <td className=" whitespace-nowrap  text-gray-700  text-xs md:text-base py-4 ">
-                                            {cart.product.price?.toLocaleString()} VNĐ
-                                        </td>
-                                        <td className=" whitespace-nowrap  text-gray-700  text-xs md:text-base py-4 ">
-                                            {(cart.product.price * cart.quantity).toLocaleString()} VNĐ
+                                        <td className=" whitespace-nowrap  text-gray-700  text-xs lg:text-xl md:text-xl py-4 px-1 ">
+                                            {(cart.product.price * cart.quantity)?.toLocaleString()} vnd
                                         </td>
                                     </tr>
                                 ))}
@@ -352,13 +362,13 @@ const Orderr = () => {
                             </Button>
                         ) : (
                             <Button
-                            type="primary"
-                            danger
-                            style={{ width: '100%' }}
-                            onClick={removeVoucher}
-                        >
-                            Xóa mã giảm giá
-                        </Button>
+                                type="primary"
+                                danger
+                                style={{ width: '100%' }}
+                                onClick={removeVoucher}
+                            >
+                                Xóa mã giảm giá
+                            </Button>
                         )}
                         {/* <div className="max-h-[200px] overflow-y-auto space-y-2 px-2">
                             {data?.data.map((sale) => (

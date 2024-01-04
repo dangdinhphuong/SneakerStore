@@ -86,7 +86,9 @@ export const getAll = async (req, res) => {
                 $project: {
                     user_id: 1,
                     status: 1,
-                    total_price: 1,
+                    total_amount_paid: 1,
+                    user_id: 1,
+                    payment_type: 1,
                     createdAt: 1,
                     updatedAt: 1,
                     payment: 1,
@@ -104,6 +106,8 @@ export const getAll = async (req, res) => {
                         user_id: "$user_id",
                         address: "$address",
                         status: "$status",
+                        total_amount_paid: "$total_amount_paid",
+                        payment_type: "$payment_type",
                         payment: "$payment",
                         total_price: "$total_price",
                         createdAt: "$createdAt",
@@ -125,6 +129,8 @@ export const getAll = async (req, res) => {
                     user_id: "$_id.user_id",
                     address: "$_id.address",
                     status: "$_id.status",
+                    total_amount_paid: "$_id.total_amount_paid",
+                    payment_type: "$_id.payment_type",
                     total_price: "$_id.total_price",
                     payment: "$_id.payment",
                     createdAt: "$_id.createdAt",
@@ -182,7 +188,7 @@ export const getAll = async (req, res) => {
                 if (!existingProduct) {
                     return res.status(404).json({
                         error: true,
-                        message: `Product with ID ${product_id} not found`,
+                        message: `Không tìm thấy san phẩm ${existingProduct.name}`,
                     });
                 }
 
@@ -194,7 +200,7 @@ export const getAll = async (req, res) => {
                 if (quantityInfoIndex === -1 || existingProduct.listQuantityRemain[quantityInfoIndex].quantity < quantity) {
                     return res.status(400).json({
                         error: true,
-                        message: `Insufficient quantity for product ${product_id} with color ${color} and size ${size}`,
+                        message: `Sản phẩm: ${existingProduct.name} có màu  ${existingProduct.listQuantityRemain[quantityInfoIndex].nameColor} và kích cỡ ${size} đã không đủ số lượng trong kho`,
                     });
                 }
 
@@ -324,6 +330,8 @@ export const getOrderById = async (req, res) => {
                     user_id: 1,
                     status: 1,
                     total_price: 1,
+                    total_amount_paid: 1,
+                    payment_type: 1,
                     createdAt: 1,
                     updatedAt: 1,
                     payment: 1,
@@ -339,6 +347,8 @@ export const getOrderById = async (req, res) => {
                     _id: {
                         _id: "$_id",
                         user_id: "$user_id",
+                        total_amount_paid: "$total_amount_paid",
+                        payment_type: "$payment_type",
                         address: "$address",
                         status: "$status",
                         payment: "$payment",
@@ -360,6 +370,8 @@ export const getOrderById = async (req, res) => {
                 $project: {
                     _id: "$_id",
                     user_id: "$_id.user_id",
+                    total_amount_paid: "$_id.total_amount_paid",
+                    payment_type: "$_id.payment_type",
                     address: "$_id.address",
                     status: "$_id.status",
                     total_price: "$_id.total_price",
