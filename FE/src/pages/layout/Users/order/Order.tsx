@@ -1,15 +1,16 @@
 import { useNewOrderMutation } from "@/api/order";
 import { createPaymentUrl, useNewPaymentMutation } from "@/api/payment";
-import { useDecreaseSaleMutation, useGetAllSalesQuery } from "@/api/sale/sale.api";
+import { useDecreaseSaleMutation, useGetAllSalesQuery, useGetSaleByCodeQuery } from "@/api/sale/sale.api";
 import { removeMultiplePrdCart } from "@/store/cart/cart.slice";
 import { useAppDispatch , useAppSelector } from "@/store/hook";
 import { ISale } from "@/types";
-import { Input } from "antd";
+import { Button, Popconfirm, Input } from "antd";
 import clsx from "clsx";
 import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import Swal from "sweetalert2";
+import axios from 'axios';
 
 const Orderr = () => {
     const initialCarts = useAppSelector((state: RootState) => state.cart.cart);
@@ -18,6 +19,7 @@ const Orderr = () => {
     const [paymentMethod, setPaymentMethod] = useState<"cash" | "banking">("banking");
     const [infoCart, setInfoCart] = useState<any>([]);
     const [address, setAddress] = useState<string>("");
+    const [voucherValue, setVoucherValue] = useState('');
 
     const [searchParams] = useSearchParams();
     const dispatch = useAppDispatch();
@@ -26,13 +28,46 @@ const Orderr = () => {
     const [newPayment] = useNewPaymentMutation();
     const [newOrder] = useNewOrderMutation();
     const [decreaseSale] = useDecreaseSaleMutation();
+    const [shouldShowDiscountButton, setShouldShowDiscountButton] = useState(true);
 
     const handlePickSale = (sale: ISale) => {
         if (selectedSale?._id === sale._id) return setSelectedSale({} as any);
+        setVoucherValue('');
         setSelectedSale(sale);
     };
 
+    const removeVoucher = () => {
+        setShouldShowDiscountButton(!shouldShowDiscountButton);
+        return setSelectedSale({} as any);
+    };
+    
+    const addVoucher = async () => {
+        if (voucherValue && voucherValue !== '') {
+            try {
+                const response = await axios.get(`http://localhost:8080/api/sales/get-by-code/${voucherValue}`);
+
+                if (response.data.data) {
+                    var voucher = response.data.data;
+                    if (selectedSale?._id === voucher._id) return setSelectedSale({} as any);
+                    setShouldShowDiscountButton(!shouldShowDiscountButton);
+                    setSelectedSale(voucher);
+                }
+                else {
+                    Swal.fire({
+                        icon: "error",
+                        title: "Mã giảm giá '" + voucherValue + "' không hiệu lực",
+                        text: "Vui lòng kiểm tra lại thông tin!",
+                        footer: '<a href="#">Why do I have this issue?</a>'
+                    });
+                }
+            } catch (error) {
+                console.error('Error fetching sale by code:', error);
+            }
+        }
+    };
+
     const handlePayment = () => {
+
         Swal.fire({
             position: "center",
             title: "Warning",
@@ -109,6 +144,7 @@ const Orderr = () => {
     useEffect(() => {
         const handleNewBooking = async () => {
             const paymentId = searchParams.get("payment_id");
+            console.log('infoCart?.cartSelected',infoCart?.cartSelected)
             if (paymentId) {
                 const infoOrder = {
                     user_id: "65465224dc28e240806b6c74",
@@ -132,6 +168,7 @@ const Orderr = () => {
         handleNewBooking();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [searchParams.get("payment_id")]);
+
     return (
         <div className="mx-5">
             <h3 className="text-x text-[#222] text-center font-bold tracking-wider my-5">Thông Tin đặt Hàng</h3>
@@ -301,8 +338,29 @@ const Orderr = () => {
 
                 <div className="col-span-1 mx-10 ">
                     <div className="border border-green-500 rounded-md py-2">
-                        <h3 className="px-2 text-xl font-semibold">Mã giảm giá</h3>
-                        <div className="max-h-[200px] overflow-y-auto space-y-2 px-2">
+                        <h3 className="px-2 text-xl font-semibold">Mã giảm giá</h3> <br></br>
+                        <Input placeholder="Mã giảm giá.." className=" p-3 w-full" value={voucherValue} onChange={(e) => setVoucherValue(e.target.value)} /> <br></br>
+                        <br></br>
+                        {shouldShowDiscountButton ? (
+                            <Button
+                                type="primary"
+                                className="bg-[#30bf3e] text-white"
+                                style={{ width: '100%' }}
+                                onClick={addVoucher}
+                            >
+                                Chọn mã giảm giá
+                            </Button>
+                        ) : (
+                            <Button
+                            type="primary"
+                            danger
+                            style={{ width: '100%' }}
+                            onClick={removeVoucher}
+                        >
+                            Xóa mã giảm giá
+                        </Button>
+                        )}
+                        {/* <div className="max-h-[200px] overflow-y-auto space-y-2 px-2">
                             {data?.data.map((sale) => (
                                 <div
                                     className={clsx(
@@ -321,18 +379,18 @@ const Orderr = () => {
                                     </div>
                                 </div>
                             ))}
-                        </div>
+                        </div> */}
                     </div>
 
                     <div className="mt-4 border border-green-500 rounded-md p-2">
                         <h3 className="text-xl font-semibold">Thông tin thanh toán</h3>
 
                         <div className="mt-4 space-y-2">
-                            <div>Tổng tiền đơn hàng: {infoCart?.totalPrice?.toLocaleString() || 0}</div>
+                            <div>Tổng tiền đơn hàng: {infoCart?.totalPrice?.toLocaleString() || 0} vnd</div>
                             <div>
                                 Mã giảm giá: {selectedSale?.name} ({selectedSale?.sale})
                             </div>
-                            <div>Tổng tiền giảm giá: {saleMoney?.toLocaleString() || 0}</div>
+                            <div>Tổng tiền giảm giá: {saleMoney?.toLocaleString() || 0} vnd</div>
                             <div>Tổng tiền phải thanh toán: {(infoCart?.totalPrice - saleMoney).toLocaleString()} vnd</div>
                         </div>
                     </div>
