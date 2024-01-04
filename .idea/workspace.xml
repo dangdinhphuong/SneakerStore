@@ -2,7 +2,14 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="4e06db92-5855-4f75-bde2-602ba82d94b7" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/BE/src/Schema/order.schema.js" beforeDir="false" afterPath="$PROJECT_DIR$/BE/src/Schema/order.schema.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/BE/src/controllers/order.js" beforeDir="false" afterPath="$PROJECT_DIR$/BE/src/controllers/order.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/BE/src/models/orders.js" beforeDir="false" afterPath="$PROJECT_DIR$/BE/src/models/orders.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FE/src/components/admin/order/order.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/FE/src/components/admin/order/order.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FE/src/pages/layout/Users/Cart/cart.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/FE/src/pages/layout/Users/Cart/cart.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FE/src/pages/layout/Users/Payment/Payment.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/FE/src/pages/layout/Users/Payment/Payment.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FE/src/pages/layout/Users/order/Order.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/FE/src/pages/layout/Users/order/Order.tsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -39,7 +46,7 @@
     <property name="node.js.detected.package.eslint" value="true" />
     <property name="node.js.selected.package.eslint" value="(autodetect)" />
     <property name="nodejs_package_manager_path" value="npm" />
-    <property name="ts.external.directory.path" value="C:\Users\phuong-code\Downloads\SneakerStore\FE\node_modules\typescript\lib" />
+    <property name="ts.external.directory.path" value="C:\Program Files\JetBrains\PhpStorm 2021.3.3\plugins\JavaScriptLanguage\jsLanguageServicesImpl\external" />
     <property name="vue.rearranger.settings.migration" value="true" />
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
@@ -52,11 +59,22 @@
       <updated>1703903336710</updated>
       <workItem from="1703903337966" duration="5464000" />
       <workItem from="1704159072646" duration="555000" />
+      <workItem from="1704359019702" duration="878000" />
     </task>
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.History.Properties">
+    <option name="COLUMN_ID_ORDER">
+      <list>
+        <option value="Default.Root" />
+        <option value="Default.Author" />
+        <option value="Default.Date" />
+        <option value="Default.Subject" />
+      </list>
+    </option>
   </component>
   <component name="Vcs.Log.Tabs.Properties">
     <option name="TAB_STATES">

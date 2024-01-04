@@ -58,10 +58,11 @@ const Payment = () => {
             "products": transformedArray,
             "total_price": handleToTalCart().totalPrice,
             "address": "Địa chỉ của bạn",
-            "sale_id": "6555018adbb1621a26e79a3e"
+            "sale_id": "6555018adbb1621a26e79a3e",
+            "total_amount_paid": handleToTalCart().totalPrice,
+            "payment_type": "bank",
         };
         return dataCreateCart;
-
     }
 
     const createOrder = async (infoOrder) => {

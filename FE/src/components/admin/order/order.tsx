@@ -2,15 +2,17 @@ import React, { useEffect, useState } from 'react';
 import { Button, Table, Spin, notification, Select, Input, DatePicker } from 'antd';
 import { FolderViewOutlined } from '@ant-design/icons';
 import { IUser } from "@/interfaces/user";
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { ISOrder } from '../../../interfaces/orders'; 
-import { useGetAllOrdersInAdminQuery } from '../../../api/order';
+import { useGetAllOrdersInAdminQuery, useUpdateOrderMutation } from '../../../api/order';
 import { useGetUserQuery } from "@/api/user";
 import axios from 'axios';
 import './a.css';
 const { RangePicker } = DatePicker;
 
 function App() {
+  const navigate = useNavigate();
+  const [updateOrder] = useUpdateOrderMutation();
   const { data:orders} = useGetAllOrdersInAdminQuery();
   const { data: users } = useGetUserQuery();
   const [searchTerm, setSearchTerm] = useState('');
@@ -23,7 +25,14 @@ function App() {
     { value: 'done', label: 'Thành công' },
     { value: 'cancel', label: 'Đã hủy' },
   ];
-
+  const handleStatusChange = (recordKey: number | string, value: string, record:any) => {
+    console.log('value:', {"status": value},record.code    );
+    
+    updateOrder({ "status": value, _id: record.code })
+     .then(() => navigate("/admin/order"));
+    handleFilterStatus(status);
+    // Thêm các xử lý khác tùy vào nhu cầu của bạn
+  };
   const dataSource = orders?.data?.data.filter((order: ISOrder) => order.status == status).map((order: ISOrder) => ({
     code: order._id,
     name: order.user_id,
@@ -77,13 +86,16 @@ function App() {
     {
       title: 'Trạng thái',
       dataIndex: 'status',
-      render: (data: string) => {
-        return <Select
-        className='ml-2'
-        defaultValue={data}
-        style={{ width: 150 }}
-        options={arrStatus}
-      />;
+      render: (data: string, record: any) => {
+        return (
+          <Select
+            className='ml-2'
+            defaultValue={data}
+            style={{ width: 150 }}
+            options={arrStatus}
+            onChange={(value) => handleStatusChange(record.key, value,record)}
+          />
+        );
       },
     },
     {

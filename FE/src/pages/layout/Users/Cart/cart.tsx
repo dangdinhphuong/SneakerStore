@@ -6,7 +6,6 @@ import { RootState } from 'path-to-your-root-reducer';
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import { toast } from "react-toastify";
-import { useSelect } from "@material-tailwind/react";
 
 const Cart = () => {
     const initialCarts = useAppSelector((state: RootState) => state.cart.cart);
@@ -36,11 +35,11 @@ const Cart = () => {
         });
     };
 
-    const handleQuantityDown = (cart: any ,cartId: string) => {
-        if(cart.quantity > 1){
+    const handleQuantityDown = (currentQuantity: number,cartId: string) => {
+        if(currentQuantity > 1){
             const cartAfter = carts.map((item: any) => {
                 if (item._id === cartId) {
-                  dispatch(updateQuantityCart({ _id: cartId, quantity: cart.quantity - 1 }))
+                  dispatch(updateQuantityCart({ _id: cartId, quantity: currentQuantity - 1 }))
                   return { ...item, quantity: item.quantity - 1 };
                 }else{
                     return item;
@@ -53,26 +52,13 @@ const Cart = () => {
         }
     }
 
-    const handleQuantityUp = (cart: any ,cartId: string) => {
-        let quantityUp = 0;
-        const cartAfter = carts.map((item: any) => {
+    const handleQuantityUp = (currentQuantity: number,cartId: string) => {
+            carts.forEach((item: any) => {
             if (item._id === cartId) {
-                quantityUp = cart.quantity + 1;
-                if(quantityUp < cart.maxSize || quantityUp == cart.maxSize){
-                    dispatch(updateQuantityCart({ _id: cartId, quantity: quantityUp }))
-                    return { ...item, quantity: item.quantity + 1 };
-                }
-            }else{
-                return item;
+                dispatch(updateQuantityCart({ _id: cartId, quantity: currentQuantity + 1 }))
+                toast.success("Cập nhật giỏ hàng thành công");
             }
         });
-        
-        if(quantityUp > cart.maxSize){
-            toast.warning("Số lượng sản phẩm hiện tại: " + cart.maxSize);
-        }else{
-            setCarts(cartAfter);
-            toast.success("Cập nhật giỏ hàng thành công");
-        }
     }
 
     // Xử lý khi checkbox con được chọn
@@ -166,15 +152,20 @@ const Cart = () => {
                                                     <img src={cart.product.image[0]} className="w-full h-auto lg:w-40 object-cover md:w-40" alt="" />
                                                 </div>
                                             </td>
-                                            <td className="whitespace-nowrap text-gray-700 p-2 ">
-                                                <div className="items-center ">
+                                            <td className="whitespace-nowrap  text-gray-700 py-4 ">
+                                                <div className=" items-center ">
                                                     <p className="text-xs lg:text-base">{cart.product.name}</p>
                                                     <div className="flex items-center gap-1">
-                                                        <div className="text-xs lg:text-base md:text-xl flex items-center"><p>Màu:</p> <div className='rounded-full' style={{backgroundColor: cart.product.listQuantityRemain?.find((item) => item.color === cart.color)?.colorHex , width: 20 , height: 20}} ></div></div>
+                                                        <span className="text-xs lg:text-base md:text-xl ">colorHex:    {cart.product.listQuantityRemain?.find((item) => item.color === cart.color)?.colorHex}</span>
+                                                        <span className="flex gap-3 rounded-full w-4 h-4 opacity-70"></span>
                                                     </div>
                                                 </div>
-                                                <span className="gap-3 text-xs lg:text-base md:text-xl">
-                                                    Kích cỡ :{
+                                                <span className="  gap-3 text-xs lg:text-base md:text-xl">nameColor:  {
+                                                    cart.product.listQuantityRemain?.find((item) => item.color === cart.color)?.nameColor
+                                                }</span>
+                                                <br />
+                                                <span className="  gap-3 text-xs lg:text-base md:text-xl">
+                                                    nameSize :{
                                                         cart.product.listQuantityRemain?.find((item) => item.color === cart.color)?.nameSize
                                                     }
                                                 </span>
@@ -182,11 +173,11 @@ const Cart = () => {
                                             <td className="whitespace-nowrap text-gray-700 py-4">
                                                 <div className="flex items-center text-xs lg:text-xl">
                                                     <div className="input-number flex items-center  border-2 ">
-                                                        <button className="btn-minus flex w-full px-2" onClick={() => handleQuantityDown(cart ,cart._id)}>
+                                                        <button className="btn-minus flex w-full px-2" onClick={() => handleQuantityDown(cart.quantity,cart._id)}>
                                                             -
                                                         </button>
                                                         <input value={cart.quantity} type="text" className="w-12 text-center border-x-2" />
-                                                        <button className="btn-plus px-2" onClick={() => handleQuantityUp(cart ,cart._id)}>
+                                                        <button className="btn-plus px-2" onClick={() => handleQuantityUp(cart.quantity,cart._id)}>
                                                             +
                                                         </button>
                                                     </div>
