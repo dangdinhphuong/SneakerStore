@@ -22,6 +22,7 @@ const Detail_Product = () => {
     const [countQuanytity,setCountQuanytity] =  useState(null);
     const dispatch = useAppDispatch();
 
+    
     const handleCountDowQuantity = () => {
         if (quantity > 1) {
             setQuantity(quantity - 1);
@@ -35,7 +36,7 @@ const Detail_Product = () => {
                 currentQauntity = cart.quantity;
             }
         });               
-        setCountQuanytity(item.quantity - currentQauntity);    
+        setCountQuanytity(item.quantity - currentQauntity < 0 || item.quantity - currentQauntity == 0 ? 0 : item.quantity - currentQauntity);    
         setSelectedSize(selectedSize === item ? null : item);
     };
 
@@ -223,12 +224,16 @@ const Detail_Product = () => {
                                                     +
                                                 </button>
                                             </div>
-                                            {countQuanytity && (
-                                                <div className="available-quantity flex items-center gap-5">
-                                                    <h2 className="text-lg font-medium">Số lượng có sẵn:</h2>
-                                                    <div>{countQuanytity}</div>
+                                            {typeof selectedSize != null  ? (
+                                                <div className="">
+                                                {countQuanytity > 0 ? (
+                                                    <div className="available-quantity flex items-center gap-5">
+                                                        <h2 className="text-lg font-medium">Số lượng có sẵn:</h2>
+                                                        <div>{countQuanytity}</div>
+                                                    </div>
+                                                   ) : ( <h2 className="text-lg text-red-800 font-medium">{countQuanytity == 0 ? 'Sản phẩm đã hết hàng' : '' }</h2>)}
                                                 </div>
-                                            )}
+                                            ) : ''}
                                         </div>
                                     </ul>
                                 </div>
@@ -237,6 +242,7 @@ const Detail_Product = () => {
                                     {/* button */}
                                     <div className="button flex items-center gap-4 mt-5">
                                         <button
+                                            disabled={countQuanytity < 0 || countQuanytity == 0}
                                             onClick={handleAddProductToCart}
                                             className="btn-addtocart flex-1 bg-[#17c6aa] text-white hover:bg-black py-4 rounded-md"
                                         >

@@ -25,9 +25,7 @@ function App() {
     { value: 'done', label: 'Thành công' },
     { value: 'cancel', label: 'Đã hủy' },
   ];
-  const handleStatusChange = (recordKey: number | string, value: string, record:any) => {
-    console.log('value:', {"status": value},record.code    );
-    
+  const handleStatusChange = (recordKey: number | string, value: string, record:any) => {    
     updateOrder({ "status": value, _id: record.code })
      .then(() => navigate("/admin/order"));
     handleFilterStatus(status);

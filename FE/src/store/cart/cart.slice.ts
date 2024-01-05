@@ -15,9 +15,10 @@ const cartSlice = createSlice({
     } as InitialStateType,
     reducers: {
         addProductToCart: (state, action: PayloadAction<ICart>) => {
-            const isMatch = [...state.cart].some((cart) => cart.product._id === action.payload.product._id);
-
-            if (!isMatch) {
+            const isVariable = [...state.cart].some((cart) => cart.product._id === action.payload.product._id && (cart.nameSize === action.payload.nameSize && cart.nameColor === action.payload.nameColor) );
+            
+            if (!isVariable) {
+                console.log(isVariable);
                 state.cart = [...state.cart, action.payload];
                 state.quantity = state.cart.length;
                 return;
