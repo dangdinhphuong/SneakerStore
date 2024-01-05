@@ -57,7 +57,7 @@ const Payment = () => {
             "status": "pending", // Bạn có thể bỏ qua trường này để sử dụng giá trị mặc định "pending"
             "products": transformedArray,
             "total_price": handleToTalCart().totalPrice,
-            "address": "Địa chỉ của bạn",
+            "address": sessionStorage.getItem("address") ?? "Địa chỉ của bạn",
             "sale_id": "6555018adbb1621a26e79a3e",
             "total_amount_paid": handleToTalCart().totalPrice,
             "payment_type": "bank",
@@ -68,6 +68,7 @@ const Payment = () => {
     const createOrder = async (infoOrder) => {
         await newOrder(infoOrder as any).unwrap();
         sessionStorage.removeItem("infoPayment");
+        sessionStorage.removeItem("address");
         dispatch(removeMultiplePrdCart(carts?.map((cart: any) => cart.product._id) as any));
         // Cos thể send mail bill ở đây
         navigate("/order-history");
@@ -82,7 +83,7 @@ const Payment = () => {
             searchParams.get("vnp_ResponseCode") == "00") {
            const dataCreateOrder = formatPaymentOrder();
            createOrder(dataCreateOrder);
-            console.log('infoCart', dataCreateOrder,carts)
+            console.log('createOrder(dataCreateOrder);', dataCreateOrder,carts)
         }else{
             Swal.fire({
                 icon: "error",

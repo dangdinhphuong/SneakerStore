@@ -81,7 +81,7 @@ const Orderr = () => {
             "status": "pending",
             "products": transformedArray,
             "total_price": (infoCart?.totalPrice - saleMoney),
-            "address": "Địa chỉ của bạn",
+            "address": address,
             "total_amount_paid": 0,
             "payment_type": "bank",
         };
@@ -95,7 +95,10 @@ const Orderr = () => {
         return dataCreateCart;
     }
     const handlePayment = () => {
-
+        if(address  == ''){
+            toast.error('Vui lòng nhập địa chỉ')
+        }else{
+        sessionStorage.setItem("address", address);
         Swal.fire({
             position: "center",
             title: "Warning",
@@ -143,7 +146,7 @@ const Orderr = () => {
             } catch (error: any) {
                 toast.error(error?.data?.message);
             }
-        });
+        });}
     };
 
     const saleMoney = 0;
@@ -152,7 +155,6 @@ const Orderr = () => {
         if(sessionStorage.getItem("infoPayment") == null){
             navigate("/");
         }
-        console.log('xin chào',sessionStorage.getItem("infoPayment"))
         const _infoCart = JSON.parse(sessionStorage.getItem("infoPayment") || "");
         if (_infoCart) setInfoCart(_infoCart);
     }, []);

@@ -10,8 +10,8 @@ const user = userString ? JSON.parse(userString) : {};
 
 const OrderHistory = () => {
     const navigate = useNavigate();
-    console.log('user',user._id);
-    if(!user || !user._id){
+    console.log('user', user._id);
+    if (!user || !user._id) {
         navigate("/");
     }
     // Laays thoong tin khi ddanwg nhap
@@ -23,7 +23,7 @@ const OrderHistory = () => {
         Swal.fire({
             position: "center",
             title: "Warning",
-            text: "Bạn chắc chắn muốn thanh toán chứ!!",
+            text: "Bạn chắc chắn muốn hủy đơn hàng chứ!!",
             icon: "warning",
             confirmButtonText: "Đồng ý",
             showDenyButton: true,
@@ -31,7 +31,7 @@ const OrderHistory = () => {
             denyButtonText: "Cancel",
         }).then(async (result) => {
             if (result.isConfirmed) {
-                updateOrder({ _id: id, status: "cancel" })
+                updateOrder({ _id: id._id, status: "cancel" })
                     .unwrap()
                     .then(() => {
                         refetch();
@@ -50,6 +50,7 @@ const OrderHistory = () => {
                     <p>Lịch sử mua hàng của bạn trống rỗng.</p>
                 </div>
                 }
+
                 {data?.data.map((order: any) => (
                     <div key={order._id} className="w-full">
                         <div className="flex items-center w-full py-2 px-4 bg-white mt-3 flex-col m-auto rounded-md">
@@ -83,9 +84,9 @@ const OrderHistory = () => {
                                             <div className="flex-1 ">
                                                 <h1 className="text-base font-bold">{product?.product?.name}</h1>
                                                 <div className="mt-1 flex gap-3">
-                                                <div className ="w-7 h-7 rounded-full flex items-center justify-center"
-                                                style={{ backgroundColor: product?.color }}
-                                                ></div>
+                                                    <div className="w-7 h-7 rounded-full flex items-center justify-center"
+                                                        style={{ backgroundColor: product?.color }}
+                                                    ></div>
                                                     <p>Size: {product?.size}</p>
                                                 </div>
                                                 <div className="mt-1 flex gap-3">
@@ -97,13 +98,34 @@ const OrderHistory = () => {
                                     ))}
                                 </div>
                                 <div className="">
-                                    <button
+                                {order.status === "waiting"  && (
+                                        <button
                                         className={clsx("bg-red-500 px-3 py-2", order.status === "cancel" && "hidden")}
                                         type="button"
                                         onClick={() => handleCancel(order._id)}
-                                    >
+                                        >
                                         <span>Hủy đơn hàng</span>
-                                    </button>
+                                        </button>
+                                    )}
+                                                  {order.status === "pending"  && (
+                                        <button
+                                        className={clsx("bg-red-500 px-3 py-2", order.status === "cancel" && "hidden")}
+                                        type="button"
+                                        onClick={() => handleCancel(order._id)}
+                                        >
+                                        <span>Hủy đơn hàng</span>
+                                        </button>
+                                    )}
+
+                                    {order.status === "delivering" && (
+                                        <button
+                                        className={clsx("bg-red-500 px-3 py-2", order.status === "cancel" && "hidden")}
+                                        style={{ backgroundColor: 'green' }}
+                                        type="button"
+                                        >
+                                        <span>Hoàn thành</span>
+                                        </button>
+                                    )}
                                 </div>
                             </div>
                             <div className="flex flex-col gap-2 w-full items-end pt-3">
