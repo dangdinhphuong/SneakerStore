@@ -3,7 +3,7 @@ import { Button, Table, Spin, notification, Select, Input, DatePicker } from 'an
 import { FolderViewOutlined } from '@ant-design/icons';
 import { IUser } from "@/interfaces/user";
 import { Link, useNavigate } from 'react-router-dom';
-import { ISOrder } from '../../../interfaces/orders'; 
+import { ISOrder } from '../../../interfaces/orders';
 import { useGetAllOrdersInAdminQuery, useUpdateOrderMutation , useGetAllOrdersQuery } from '../../../api/order';
 import { useGetUserQuery } from "@/api/user";
 import axios from 'axios';
@@ -29,14 +29,21 @@ function App() {
     { value: 'cancel', label: 'Đã hủy' },
   ];
   
-  const handleStatusChange = (recordKey: number | string, value: string, record:any) => {    
+  const handleStatusChange = (recordKey: number | string, value: string, record:any) => {
     updateOrder({ "status": value, _id: record.code })
      .then(() => navigate("/admin/order"));
     handleFilterStatus(status);
     // Thêm các xử lý khác tùy vào nhu cầu của bạn
   };
+
+  const getStatusChange = () => {    
+// Thêm phần tử mới vào đầu mảng
+     arrStatus.unshift({ value: '', label: 'Tất cả' });
+     return arrStatus;
+  };
   let dataSource = [];
-  dataSource = orderClient?.data.map((order: ISOrder) => (
+  
+  dataSource = orders?.data.map((order: ISOrder) => (
       {
         code: order._id._id,
         name: order.user.name,
@@ -163,7 +170,7 @@ function App() {
             className='ml-2'
             defaultValue={status}
             style={{ width: 200 }}
-            options={arrStatusFillter}
+            options={getStatusChange()}
             onChange={handleFilterStatus}
           />
         </div>
