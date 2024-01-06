@@ -37,6 +37,8 @@ const UserInformation: React.FC = () => {
 
   const handleLogout = () => {
     localStorage.removeItem("user");
+    localStorage.clear();
+    sessionStorage.clear();
     message.success("Đã đăng xuất thành công");
     navigate("/");
   };
