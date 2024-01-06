@@ -2,11 +2,10 @@ import { useGetAllOrdersQuery, useUpdateOrderMutation } from "@/api/order";
 import clsx from "clsx";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams, Link } from "react-router-dom";
 import Swal from "sweetalert2";
 const userString = localStorage.getItem("user");
 const user = userString ? JSON.parse(userString) : {};
-
 
 const OrderHistory = () => {
     const navigate = useNavigate();
@@ -40,6 +39,9 @@ const OrderHistory = () => {
             }
         });
     };
+    const orderDetail = (id: string)=>{
+        navigate(`/order-history/detail/65994635adc32872f164fa4b`);
+    }
     return (
         <div className="mt-6 space-y-4">
             {isFetching && <p>Loading...</p>}
@@ -98,34 +100,37 @@ const OrderHistory = () => {
                                     ))}
                                 </div>
                                 <div className="">
-                                {order.status === "waiting"  && (
+                                    {order.status === "waiting" && (
                                         <button
-                                        className={clsx("bg-red-500 px-3 py-2", order.status === "cancel" && "hidden")}
-                                        type="button"
-                                        onClick={() => handleCancel(order._id)}
+                                            className={clsx("bg-red-500 px-3 py-2", order.status === "cancel" && "hidden")}
+                                            type="button"
+                                            onClick={() => handleCancel(order._id)}
                                         >
-                                        <span>Hủy đơn hàng</span>
+                                            <span>Hủy đơn hàng</span>
                                         </button>
                                     )}
-                                                  {order.status === "pending"  && (
+                                    {order.status === "pending" && (
                                         <button
-                                        className={clsx("bg-red-500 px-3 py-2", order.status === "cancel" && "hidden")}
-                                        type="button"
-                                        onClick={() => handleCancel(order._id)}
+                                            className={clsx("bg-red-500 px-3 py-2", order.status === "cancel" && "hidden")}
+                                            type="button"
+                                            onClick={() => handleCancel(order._id)}
                                         >
-                                        <span>Hủy đơn hàng</span>
+                                            <span>Hủy đơn hàng</span>
                                         </button>
                                     )}
 
                                     {order.status === "delivering" && (
                                         <button
-                                        className={clsx("bg-red-500 px-3 py-2", order.status === "cancel" && "hidden")}
-                                        style={{ backgroundColor: 'green' }}
-                                        type="button"
+                                            className={clsx("bg-red-500 px-3 py-2", order.status === "cancel" && "hidden")}
+                                            style={{ backgroundColor: 'green' }}
+                                            type="button"
                                         >
-                                        <span>Hoàn thành</span>
+                                            <span>Hoàn thành</span>
                                         </button>
                                     )}
+                                          <button className="btn js-prd-addtocart text-white bg-[#17c6aa] hover:bg-[#1b1a1a] rounded-sm px-4 py-2 font-semibold "  onClick={() => orderDetail(order._id._id)}>
+                                            Chi tiết đơn hàng
+                                        </button>
                                 </div>
                             </div>
                             <div className="flex flex-col gap-2 w-full items-end pt-3">

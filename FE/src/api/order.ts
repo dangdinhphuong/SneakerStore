@@ -21,8 +21,13 @@ const orderApi = createApi({
         updateOrder: builder.mutation<any, any>({
             query: ({ _id, status }) => ({ url: "/api/orders/" + _id, method: "PUT", body: { status } }),
         }),
-        getOrderById: builder.query<any, any>({
-            query: (id) => `/api/orders/${id}`
+        getOrderById2: builder.query<any, any>({
+            query: (id) => `/api/orders/${id}`,
+            providesTags: ["Orders"]
+        }),
+        getOrderById: builder.query<ISOrder, number | string>({
+            query: (id) => `/api/orders/${id}`,
+            providesTags: ["Orders"]  
         }),
     }),
 });

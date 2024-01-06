@@ -68,6 +68,7 @@ import Detailtintuc from "./components/admin/tintuc/detail-tintuc";
 import NotFound from "./pages/layout/Client/NotFound";
 import Detail_category from "./pages/layout/Users/List-Category/detail-category";
 import OrderHistory from "./pages/layout/Users/OrderHistory";
+import OrderDetail from "./pages/layout/Users/OrderHistory/detail";
 
 
 const isAuthenticated = (): boolean => {
@@ -135,6 +136,11 @@ export const routers = createBrowserRouter([
     {
         path: "/order-history",
         element: <OrderHistory />,
+    },
+    ,
+    {
+        path: "/order-history/detail/:id",
+        element: <OrderDetail />,
     },
       {
         path: "/category",

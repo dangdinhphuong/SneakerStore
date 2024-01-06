@@ -333,6 +333,7 @@ export const getOrderById = async (req, res) => {
                     total_price: 1,
                     total_amount_paid: 1,
                     payment_type: 1,
+                    address:1,
                     createdAt: 1,
                     updatedAt: 1,
                     payment: 1,
