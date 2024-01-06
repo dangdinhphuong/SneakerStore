@@ -4,7 +4,7 @@ import { FolderViewOutlined } from '@ant-design/icons';
 import { IUser } from "@/interfaces/user";
 import { Link, useNavigate } from 'react-router-dom';
 import { ISOrder } from '../../../interfaces/orders'; 
-import { useGetAllOrdersInAdminQuery, useUpdateOrderMutation } from '../../../api/order';
+import { useGetAllOrdersInAdminQuery, useUpdateOrderMutation , useGetAllOrdersQuery } from '../../../api/order';
 import { useGetUserQuery } from "@/api/user";
 import axios from 'axios';
 import './a.css';
@@ -13,7 +13,7 @@ const { RangePicker } = DatePicker;
 function App() {
   const navigate = useNavigate();
   const [updateOrder] = useUpdateOrderMutation();
-  const { data:orders} = useGetAllOrdersInAdminQuery();
+  const { data:orders} = useGetAllOrdersQuery();
   const { data: users } = useGetUserQuery();
   const [searchTerm, setSearchTerm] = useState('');
   const [status , setStatus] = useState('pending');
@@ -25,6 +25,7 @@ function App() {
     { value: 'done', label: 'Thành công' },
     { value: 'cancel', label: 'Đã hủy' },
   ];
+  
   const handleStatusChange = (recordKey: number | string, value: string, record:any) => {    
     updateOrder({ "status": value, _id: record.code })
      .then(() => navigate("/admin/order"));

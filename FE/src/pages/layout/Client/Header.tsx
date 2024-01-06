@@ -20,7 +20,8 @@ const Header = () => {
     { name: "Thông Tin", path: "/about" },
     { name: "Liên Hệ", path: "/contact" },
   ];
-  const [carts, setCarts] = useState(useAppSelector((state: RootState) => state.cart.cart));
+  const initialCarts = useAppSelector((state: RootState) => state.cart.cart);
+  const [carts, setCarts] = useState(initialCarts);
   const navigate = useNavigate();
   const [activeLink, setActiveLink] = useState("");
   const [valueSearch, setValueSearch] = useState("");
@@ -29,7 +30,9 @@ const Header = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const { data: searchResults, error, isLoading, refetch } = useSearchProductsQuery(searchTerm);
 
-  console.log(carts);
+  useEffect(() => {
+    setCarts(initialCarts);
+  } , [initialCarts])
 
   useEffect(() => {
     if (searchTerm) {

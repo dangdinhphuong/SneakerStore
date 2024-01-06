@@ -13,7 +13,8 @@ import { Button, Radio } from "antd";
 import { CheckOutlined } from '@ant-design/icons';
 import Swal from 'sweetalert2';
 const Detail_Product = () => {
-    const [carts, setCarts] = useState(useAppSelector((state: RootState) => state.cart.cart));
+    const initialCarts = useAppSelector((state: RootState) => state.cart.cart);
+    const [carts, setCarts] = useState(initialCarts);
     const [quantity, setQuantity] = useState<number>(1);
     const { id } = useParams<{ id: string }>(); // Get the product id from the URL parameters
     const { data: product, isLoading } = useGetProductByIdQuery(String(id));
@@ -22,6 +23,9 @@ const Detail_Product = () => {
     const [countQuanytity,setCountQuanytity] =  useState(null);
     const dispatch = useAppDispatch();
 
+    useEffect(() => {
+       setCarts(initialCarts);
+    } , [initialCarts])
     
     const handleCountDowQuantity = () => {
         if (quantity > 1) {
@@ -29,15 +33,22 @@ const Detail_Product = () => {
         }
     };
 
-    const handleCountQuanTity = (item: any) => {
-        let currentQauntity = 0;
+    const handleCountQuanTity = (item: any) => {        
+        let currentQauntity = 0;        
         carts.forEach((cart: any) => {
-            if(cart.product?._id == id ){
+            if(cart.product?._id == id && cart.nameSize == item.nameSize && cart.nameColor == item.nameColor ){
                 currentQauntity = cart.quantity;
             }
-        });               
+        });  
+        console.log(currentQauntity);
+        
+        console.log(carts);
         setCountQuanytity(item.quantity - currentQauntity < 0 || item.quantity - currentQauntity == 0 ? 0 : item.quantity - currentQauntity);    
         setSelectedSize(selectedSize === item ? null : item);
+        
+        if(item.quantity - currentQauntity < 0 || item.quantity - currentQauntity == 0){
+            setQuantity(0);
+        } 
     };
 
     const handleIncreaseQuantity = () => {
@@ -88,11 +99,11 @@ const Detail_Product = () => {
                 ,
                 // Note
             },
-            // Note
-
         };
 
-        setCountQuanytity(countQuanytity - 1);
+        const quantityAfter = countQuanytity - quantity;
+        setCountQuanytity(quantityAfter);
+        setQuantity(quantityAfter == 0 ? 0 : 1);
         dispatch(addProductToCart(infoCart as any));
         toast.success("Thêm sản phẩm vào giỏ hàng thành công");
         // addProductToCart()

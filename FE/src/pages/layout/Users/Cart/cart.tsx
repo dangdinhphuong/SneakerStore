@@ -41,7 +41,7 @@ const Cart = () => {
         if(cart.quantity > 1){
             const cartAfter = carts.map((item: any , ind:number) => {
                 if (item._id === cartId && ind == index) {
-                  dispatch(updateQuantityCart({ _id: cartId, quantity: cart.quantity - 1 }))
+                  dispatch(updateQuantityCart({ _id: cartId, quantity: cart.quantity - 1, nameSize: item.nameSize , nameColor: item.nameColor }))
                   return { ...item, quantity: item.quantity - 1 };
                 }else{
                     return item;
@@ -60,7 +60,7 @@ const Cart = () => {
             if (item._id === cartId && ind == index) {
                 quantityUp = cart.quantity + 1;
                 if(quantityUp < cart.maxSize || quantityUp == cart.maxSize){
-                    dispatch(updateQuantityCart({ _id: cartId, quantity: quantityUp }))
+                    dispatch(updateQuantityCart({ _id: cartId, quantity: quantityUp, nameSize: item.nameSize , nameColor: item.nameColor}))
                     return { ...item, quantity: item.quantity + 1 };
                 }
             }else{
@@ -84,16 +84,20 @@ const Cart = () => {
         setCheckedItems({ ...checkedItems, [name]: checked });
     };
 
-    const handleSelectAll = () => {
-        const newCheckedItems: any = {};
-        if (!selectAll) {
-            // Chọn tất cả
-            carts.forEach((item: any) => {
-                newCheckedItems[item._id] = true;
+    const handleSelectAll = () => {     
+        const newCheckedItems: any = {};    
+        if(!selectAll){
+            carts.forEach((item: any, index: number) => {
+                newCheckedItems[index] = true;
             });
-        }
+            setSelectAll(true);  
+        }else{
+            carts.forEach((item: any, index: number) => {
+                newCheckedItems[index] = false;
+            });
+            setCheckedItems(newCheckedItems);
+        } 
         setCheckedItems(newCheckedItems);
-        setSelectAll(!selectAll);
     };
 
     const handleToTalCart = () => {
@@ -127,7 +131,7 @@ const Cart = () => {
     };
 
     useEffect(() => {
-        const allChecked = carts.every((item: any) => checkedItems[item._id]);
+        const allChecked = carts.every((item: any,index: number ) => checkedItems[index]);
         setSelectAll(allChecked);
     }, [checkedItems, carts]);
 

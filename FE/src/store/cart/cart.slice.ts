@@ -18,13 +18,13 @@ const cartSlice = createSlice({
             const isVariable = [...state.cart].some((cart) => cart.product._id === action.payload.product._id && (cart.nameSize === action.payload.nameSize && cart.nameColor === action.payload.nameColor) );
             
             if (!isVariable) {
-                console.log(isVariable);
                 state.cart = [...state.cart, action.payload];
                 state.quantity = state.cart.length;
                 return;
             }
             state.cart = [...state.cart].map((cart) =>
-                cart.product._id === action.payload.product._id ? { ...cart, quantity: cart.quantity + action.payload.quantity } : cart
+                cart.product._id === action.payload.product._id && (cart.nameSize === action.payload.nameSize && cart.nameColor === action.payload.nameColor) 
+                 ? { ...cart, quantity: cart.quantity + action.payload.quantity } : cart
             );
         },
         removeProductToCart: (state, action: PayloadAction<string>) => {
@@ -35,8 +35,8 @@ const cartSlice = createSlice({
             state.cart = [...state.cart].filter((item) => !action.payload.includes(item._id as any));
             state.quantity = state.cart.length;
         },
-        updateQuantityCart: (state, action: PayloadAction<{ _id: string; quantity: any }>) => {
-            state.cart = [...state.cart].map((item) => (item._id === action.payload._id ? { ...item, quantity: action.payload.quantity } : item));
+        updateQuantityCart: (state, action: PayloadAction<{ _id: string; quantity: any; nameSize: any ;nameColor: any  }>) => {
+            state.cart = [...state.cart].map((item) => (item._id === action.payload._id &&  (item.nameSize == action.payload.nameSize && item.nameColor == action.payload.nameColor)  ? { ...item, quantity: action.payload.quantity } : item));
             state.quantity = state.cart.length;
         },
     },
