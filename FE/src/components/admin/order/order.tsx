@@ -3,8 +3,8 @@ import { Button, Table, Spin, notification, Select, Input, DatePicker } from 'an
 import { FolderViewOutlined } from '@ant-design/icons';
 import { IUser } from "@/interfaces/user";
 import { Link, useNavigate } from 'react-router-dom';
-import { ISOrder } from '../../../interfaces/orders'; 
-import { useGetAllOrdersInAdminQuery, useUpdateOrderMutation } from '../../../api/order';
+import { ISOrder } from '../../../interfaces/orders';
+import { useGetAllOrdersInAdminQuery, useUpdateOrderMutation , useGetAllOrdersQuery } from '../../../api/order';
 import { useGetUserQuery } from "@/api/user";
 import axios from 'axios';
 import './a.css';
@@ -13,10 +13,14 @@ const { RangePicker } = DatePicker;
 function App() {
   const navigate = useNavigate();
   const [updateOrder] = useUpdateOrderMutation();
-  const { data:orders} = useGetAllOrdersInAdminQuery();
+  // const { data:orders} = useGetAllOrdersInAdminQuery();
+  const { data:orderClient} = useGetAllOrdersQuery();
   const { data: users } = useGetUserQuery();
   const [searchTerm, setSearchTerm] = useState('');
-  const [status , setStatus] = useState('pending');
+  const [status , setStatus] = useState('');
+  const [userName , setUserName] = useState('');
+    const [code , setCode] = useState('');
+  const [orderDate , setOrderDate] = useState('');
 
   const arrStatus = [
     { value: 'pending', label: 'Chờ xác nhận shop' },
@@ -25,21 +29,40 @@ function App() {
     { value: 'done', label: 'Thành công' },
     { value: 'cancel', label: 'Đã hủy' },
   ];
-  const handleStatusChange = (recordKey: number | string, value: string, record:any) => {    
+  const arrStatusFillter = [
+    { value: '', label: 'Tất cả' },
+    { value: 'pending', label: 'Chờ xác nhận shop' },
+    { value: 'waiting', label: 'Chờ vận chuyển' },
+    { value: 'delivering', label: 'Đang vận chuyển' },
+    { value: 'done', label: 'Thành công' },
+    { value: 'cancel', label: 'Đã hủy' },
+  ];
+  const handleStatusChange = (recordKey: number | string, value: string, record:any) => {
     updateOrder({ "status": value, _id: record.code })
      .then(() => navigate("/admin/order"));
     handleFilterStatus(status);
     // Thêm các xử lý khác tùy vào nhu cầu của bạn
   };
-  const dataSource = orders?.data?.data.filter((order: ISOrder) => order.status == status).map((order: ISOrder) => ({
-    code: order._id,
-    name: order.user_id,
-    status: order.status,
-    address: order.address,
-    product: order.products,
-    moneny: order.total_price
-  }));  
-
+  let dataSource = [];
+  dataSource = orderClient?.data.map((order: ISOrder) => (
+      {
+        code: order._id._id,
+        name: order.user.name,
+        status: order.status,
+        address: order.address,
+        product: order.products,
+        moneny: order.total_price
+      }
+  ));
+  if(status){
+    dataSource = dataSource.filter((order: ISOrder) => order.status == status);
+  }
+  if(userName){
+    dataSource = dataSource.filter((order: ISOrder) => order.name == userName);
+  }
+  if(code){
+    dataSource = dataSource.filter((order: ISOrder) => order.code == code);
+  }
   const columns = [
     {
       title: 'Mã đơn',
@@ -114,7 +137,15 @@ function App() {
   const handleFilterStatus = (value: string) => {
     setStatus(value);
   }
-
+  const onChangeSearchName = (e) => {
+    setUserName(e.target.value.trim())
+  }
+  const onChangeSearchCode = (e) => {
+    setCode(e.target.value.trim())
+  }
+  const onChangeSearchOrderDate = (e) => {
+    setOrderDate(e)
+  }
   return (
     <>
       <header>
@@ -124,19 +155,23 @@ function App() {
         <div className="mt-2 flex">
           <Input
             placeholder="Tìm hóa đơn theo mã đơn"
+            value={code}
+            onChange={onChangeSearchCode}
             style={{ width: 200 }}
           />
           <Input
             className='ml-3'
+            value={userName}
+            onChange={onChangeSearchName}
             placeholder="Tìm hóa đơn theo tên người mua"
             style={{ width: 200 }}
           />
-          <RangePicker className='ml-3' />
+          {/*<RangePicker className='ml-3' value={orderDate}  onChange={onChangeSearchOrderDate}/>*/}
           <Select
             className='ml-2'
             defaultValue={status}
             style={{ width: 200 }}
-            options={arrStatus}
+            options={arrStatusFillter}
             onChange={handleFilterStatus}
           />
         </div>

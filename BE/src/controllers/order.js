@@ -88,7 +88,7 @@ export const getAll = async (req, res) => {
                     status: 1,
                     total_amount_paid: 1,
                     total_price:1,
-                    user_id: 1,
+                    address: 1,
                     payment_type: 1,
                     createdAt: 1,
                     updatedAt: 1,
@@ -118,7 +118,7 @@ export const getAll = async (req, res) => {
                         $push: { product: "$product",
                          quantity: "$quantity" ,
                          color: "$color" ,
-                         size: "$size" 
+                         size: "$size"
                         },
                     },
                     user: { $first: "$user" },
@@ -361,7 +361,7 @@ export const getOrderById = async (req, res) => {
                         $push: { product: "$product",
                          quantity: "$quantity" ,
                          color: "$color" ,
-                         size: "$size" 
+                         size: "$size"
                         },
                     },
                     user: {$first: "$user"},
