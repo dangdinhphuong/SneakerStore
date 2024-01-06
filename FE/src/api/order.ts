@@ -14,12 +14,15 @@ const orderApi = createApi({
         }),
         getAllOrders: builder.query<{ data: any[] }, any>({
             query: (params) => ({ url: "/api/orders", params }),
+            providesTags: ["Orders"]
         }),
         newOrder: builder.mutation<{ data: any }, any>({
             query: (data) => ({ url: "/api/orders", method: "POST", body: data }),
+            invalidatesTags: ["Orders"]
         }),
         updateOrder: builder.mutation<any, any>({
             query: ({ _id, status }) => ({ url: "/api/orders/" + _id, method: "PUT", body: { status } }),
+            invalidatesTags: ["Orders"]
         }),
         getOrderById2: builder.query<any, any>({
             query: (id) => `/api/orders/${id}`,
