@@ -38,54 +38,54 @@ function getItem(
 }
 
 const items: MenuItem[] = [
-  getItem(<Link to="/admin">Dashboard</Link>, '1', <PieChartOutlined />),
-  getItem('User', 'sub1', <UserOutlined />, [
-    getItem(<Link to="/admin/user">List</Link>, '3',),
-    getItem(<Link to="/admin/user/add">Add</Link>, '4'),
+  getItem(<Link to="/admin">Thống kê</Link>, '1', <PieChartOutlined />),
+  getItem('Người dùng', 'sub1', <UserOutlined />, [
+    getItem(<Link to="/admin/user">Danh sách</Link>, '3',),
+    // getItem(<Link to="/admin/user/add">Add</Link>, '4'),
   ]),
-  getItem(<Link to="/admin/product">Product</Link>, '10', <UnorderedListOutlined />,
+  getItem(<Link to="/admin/product">Sản phẩm</Link>, '10', <UnorderedListOutlined />,
     [
-      getItem(<Link to="/admin/product">List</Link>, '11',),
-      getItem(<Link to="/admin/product/add">Add</Link>, '12'),
+      getItem(<Link to="/admin/product">Danh sách</Link>, '11',),
+      // getItem(<Link to="/admin/product/add">Add</Link>, '12'),
       getItem(<Link to="/admin/product/recycle"><DeleteOutlined /></Link>, '13'),
 
     ]),
-  getItem(<Link to="/admin/size">Size</Link>, '14', <ControlOutlined />,
-    [
-      getItem(<Link to="/admin/size">List</Link>, '15',),
-      getItem(<Link to="/admin/size/add">Add</Link>, '16'),
+  // getItem(<Link to="/admin/size">Size</Link>, '14', <ControlOutlined />,
+  //   [
+  //     getItem(<Link to="/admin/size">Danh sách</Link>, '15',),
+  //     getItem(<Link to="/admin/size/add">Add</Link>, '16'),
 
-    ]),
+  //   ]),
   getItem(<Link to="/admin/tintuc">Tin tức</Link>, '25', <DesktopOutlined />,
     [
       getItem(<Link to="/admin/tintuc/add">Thêm tin tức</Link>, '27'),
     ]),
-  getItem(<Link to="/admin/comments">Comment</Link>, '28', <CommentOutlined />,
+  getItem(<Link to="/admin/comments">Bình luận</Link>, '28', <CommentOutlined />,
   ),
   getItem('Danh mục', 'sub20', <UnorderedListOutlined />, [
-    getItem(<Link to="/admin/category">List</Link>, '37',),
-    getItem(<Link to="/admin/category/add">Add</Link>, '4'),
+    getItem(<Link to="/admin/category">Danh sách</Link>, '37',),
+    getItem(<Link to="/admin/category/add">Thêm</Link>, '4'),
   ]),
   getItem('Thông tin', 'sub21', <BookOutlined />, [
-    getItem(<Link to="/admin/information">List</Link>, '38',),
-    getItem(<Link to="/admin/information/add">Add</Link>, '40'),
+    getItem(<Link to="/admin/information">Danh sách</Link>, '38',),
+    getItem(<Link to="/admin/information/add">Thêm</Link>, '40'),
   ]),
   getItem('Liên hệ', 'sub22', <MailOutlined />, [
-    getItem(<Link to="/admin/contact">List</Link>, '39',),
+    getItem(<Link to="/admin/contact">Danh sách</Link>, '39',),
   ]),
-  getItem('Role', 'sub4', <UnorderedListOutlined />, [
-    getItem(<Link to="/admin/role">List</Link>, '34',),
-    getItem(<Link to="/admin/role/add">Add</Link>, '35'),
+  getItem('Vai trò', 'sub4', <UnorderedListOutlined />, [
+    getItem(<Link to="/admin/role">Danh sách</Link>, '34',),
+    getItem(<Link to="/admin/role/add">Thêm</Link>, '35'),
   ]),
-  getItem('Order', 'sub5', <BarChartOutlined /> , [
-    getItem(<Link to="/admin/order">List</Link>, '36',),
-    getItem(<Link to="/admin/role/add">Add</Link>, '37'),
+  getItem('Đơn hàng', 'sub5', <BarChartOutlined /> , [
+    getItem(<Link to="/admin/order">Danh sách</Link>, '36',),
+    // getItem(<Link to="/admin/role/add">Add</Link>, '37'),
   ]),
-  getItem('Color', 'sub6', <UnorderedListOutlined />, [
-    getItem(<Link to="/admin/order">List</Link>, '38',),
-    getItem(<Link to="/admin/color/add">Add</Link>, '39'),
-  ]),
-  getItem(<Link to="/admin/sale">Sale</Link>, '40', <TeamOutlined />,),
+  // getItem('Color', 'sub6', <UnorderedListOutlined />, [
+  //   getItem(<Link to="/admin/order">Danh sách</Link>, '38',),
+  //   getItem(<Link to="/admin/color/add">Thêm</Link>, '39'),
+  // ]),
+  getItem(<Link to="/admin/sale">Mã giảm giá</Link>, '40', <TeamOutlined />,),
   getItem(<Link to="/">Trang chủ</Link>, '41', <HomeOutlined />,),
 ];
 
@@ -115,7 +115,7 @@ const AdminLayout: React.FC = () => {
         <header className="bg-gray-50">
           <div className="mx-auto max-w-screen-xl px-4 py-8 sm:px-6 lg:px-8">
             <div className="flex items-center sm:justify-between sm:gap-4">
-              <div className="relative hidden sm:block">
+              {/* <div className="relative hidden sm:block">
                 <label className="sr-only" form="search"> Search </label>
 
                 <input
@@ -148,13 +148,13 @@ const AdminLayout: React.FC = () => {
                     />
                   </svg>
                 </button>
-              </div>
+              </div> */}
 
               <div
                 className="flex flex-1 items-center justify-between gap-8 sm:justify-end"
               >
                 <div className="flex gap-4">
-                  <button
+                  {/* <button
                     type="button"
                     className="block shrink-0 rounded-lg bg-white p-2.5 text-gray-600 shadow-sm hover:text-gray-700 sm:hidden"
                   >
@@ -173,9 +173,9 @@ const AdminLayout: React.FC = () => {
                         d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
                       />
                     </svg>
-                  </button>
+                  </button> */}
 
-                  <a
+                  {/* <a
                     href="#"
                     className="block shrink-0 rounded-lg bg-white p-2.5 text-gray-600 shadow-sm hover:text-gray-700"
                   >
@@ -198,9 +198,9 @@ const AdminLayout: React.FC = () => {
                         d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14zm-4 6v-7.5l4-2.222"
                       />
                     </svg>
-                  </a>
+                  </a> */}
 
-                  <a
+                  {/* <a
                     href="#"
                     className="block shrink-0 rounded-lg bg-white p-2.5 text-gray-600 shadow-sm hover:text-gray-700"
                   >
@@ -219,7 +219,7 @@ const AdminLayout: React.FC = () => {
                         d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"
                       />
                     </svg>
-                  </a>
+                  </a> */}
                 </div>
                 <UserInformation />
               </div>

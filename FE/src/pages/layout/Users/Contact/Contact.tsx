@@ -38,7 +38,7 @@ const Contact = () => {
             <div className='img mt-10'>
             <iframe
               src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d14895.092641094374!2d105.74612438914794!3d21.041760553526792!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x313455e940879933%3A0xcf10b34e9f1a03df!2zVHLGsOG7nW5nIENhbyDEkeG6s25nIEZQVCBQb2x5dGVjaG5pYw!5e0!3m2!1sen!2s!4v1703237098908!5m2!1sen!2s"
-              width="1320"
+              width="1470"
               height="300"
               loading="lazy"
               referrerpolicy="no-referrer-when-downgrade"
@@ -125,7 +125,7 @@ const Contact = () => {
                                     { type: "email", message: "email không đúng định dạng" }
                                 ]}
                                 hasFeedback
-                                className="relative left-[34px]"
+                                className="relative left-[49px]"
                             >
                                 <Input className="relative top-[14px] left-[-65px] w-[350px] mb-4 mt-3" />
                             </Form.Item>
@@ -140,7 +140,7 @@ const Contact = () => {
 
                                 ]}
                                 hasFeedback
-                                className="relative left-[57px]"
+                                className="relative left-[50px]"
                             >
                                 <Input className="relative top-[15px] left-[-114px] w-[350px] mb-4 mt-3" />
                             </Form.Item>
@@ -153,7 +153,7 @@ const Contact = () => {
                                     { required: true, message: "Vui lòng nhập nội dung" },
                                 ]}
                                 hasFeedback
-                                className="relative left-[46px]"
+                                className="relative left-[50px]"
                             >
                                 <Input.TextArea
                                     className="relative top-[15px] left-[-90px] w-[350px] mb-4 mt-3 bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 h-32 text-base outline-none text-gray-700 py-1 px-3 resize-none leading-6 transition-colors duration-200 ease-in-out"
