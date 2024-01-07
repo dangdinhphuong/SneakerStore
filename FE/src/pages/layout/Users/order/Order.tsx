@@ -38,13 +38,21 @@ const Orderr = () => {
   const [newPayment] = useNewPaymentMutation();
   const [newOrder] = useNewOrderMutation();
   const [decreaseSale] = useDecreaseSaleMutation();
-  const [shouldShowDiscountButton, setShouldShowDiscountButton] =
-    useState(true);
+  const [shouldShowDiscountButton, setShouldShowDiscountButton] = useState(true);
+  const currentDate = new Date();
 
+  const filteredDataVoucher = data?.data.filter(function(item) {
+    // Chuyển đổi expirationDate thành đối tượng Date
+    var expirationDate = new Date(item.expirationDate);
+
+    // Kiểm tra nếu expirationDate lớn hơn hoặc bằng ngày hiện tại và usageLimit lớn hơn 0
+    return expirationDate >= currentDate && item.usageLimit > 0;
+}) ?? []; 
   const handlePickSale = (sale: ISale) => {
-    if (selectedSale?._id === sale._id) return setSelectedSale({} as any);
-    setVoucherValue("");
-    setSelectedSale(sale);
+    console.log('sale',sale);
+    // if (selectedSale?._id === sale._id) return setSelectedSale({} as any);
+    setVoucherValue(sale.code ?? '');
+    // setSelectedSale(sale);
   };
 
   const removeVoucher = () => {
@@ -61,7 +69,8 @@ const Orderr = () => {
 
         if (response.data.data) {
           const voucher = response.data.data;
-          if (voucher.quantity === -1) {
+           const expirationDateVocher  = new Date(voucher.expirationDate);
+          if (voucher.quantity === -1 || expirationDateVocher < currentDate) {
             // Kiểm tra số lượng giảm giá
             Swal.fire({
               icon: "error",
@@ -469,8 +478,8 @@ const Orderr = () => {
                 Xóa mã giảm giá
               </Button>
             )}
-            {/* <div className="max-h-[200px] overflow-y-auto space-y-2 px-2">
-                            {data?.data.map((sale) => (
+            {<div className="max-h-[200px] overflow-y-auto space-y-2 px-2">
+                            {filteredDataVoucher.map((sale) => (
                                 <div
                                     className={clsx(
                                         "cursor-pointer hover:bg-green-200 mt-4 border border-green-500 rounded-md p-2",
@@ -488,7 +497,7 @@ const Orderr = () => {
                                     </div>
                                 </div>
                             ))}
-                        </div> */}
+                        </div>}
           </div>
 
           <div className="mt-4 border border-green-500 rounded-md p-2">
