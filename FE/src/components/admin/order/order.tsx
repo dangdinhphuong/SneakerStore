@@ -49,6 +49,11 @@ function App() {
     { value: "done", label: "Thành công" },
     { value: "cancel", label: "Đã hủy" },
   ];
+
+  const handelChangeObject = (address: string) => {
+    return JSON.parse(address);
+  };
+
   const handleStatusChange = (
     recordKey: number | string,
     value: string,
@@ -95,7 +100,16 @@ function App() {
     {
       title: "Địa chỉ",
       dataIndex: "address",
-      key: "address",
+      render: (data: any) => {
+        return <p>{handelChangeObject(data).address}</p>;
+      },
+    },
+    {
+      title: "Số điện thoại",
+      dataIndex: "address",
+      render: (data: any) => {
+        return <p>{handelChangeObject(data).phone}</p>;
+      },
     },
     {
       title: "Số tiền",
@@ -127,51 +141,20 @@ function App() {
         const statusLabel = arrStatus.find((item) => item.value === status);
         return statusLabel ? statusLabel.label : "";
       },
-      // render: (data: string, record: any) => {
-      //   return (
-      //     <Select
-      //       className='ml-2'
-      //       defaultValue={data}
-      //       style={{ width: 150 }}
-      //       options={arrStatus}
-      //       onChange={(value) => handleStatusChange(record.key, value,record)}
-      //     />
-      //   );
-      // },
     },
     {
       title: "Action",
       key: "action",
-      render: (record: any) => {
+      render: ({ code: id }: { code: number | string }) => {
         return (
-          <>
-            {filterStatus === "pending" && record.status === "pending" && (
-              <Button
-                onClick={() =>
-                  handleStatusChange(record.key, "waiting", record)
-                }
-              >
-                Chờ vận chuyển
-              </Button>
-            )}
-            {filterStatus === "waiting" && record.status === "waiting" && (
-              <Button
-                onClick={() =>
-                  handleStatusChange(record.key, "delivering", record)
-                }
-              >
-                Đang vận chuyển
-              </Button>
-            )}
-            {filterStatus === "delivering" &&
-              record.status === "delivering" && (
-                <Button
-                  onClick={() => handleStatusChange(record.key, "done", record)}
-                >
-                  Thành công
-                </Button>
-              )}
-          </>
+          <div className="flex items-center">
+            <Link
+            to={`/admin/order/${id}` }
+            className="px-3  text-xl rounded-md border border-gray-300">
+            <Link />
+                <FolderViewOutlined className="flex items-center py-[5px]" />
+            </Link>
+          </div>
         );
       },
     },
@@ -211,7 +194,8 @@ function App() {
             style={{ width: 200 }}
           />
           {/*<RangePicker className='ml-3' value={orderDate}  onChange={onChangeSearchOrderDate}/>*/}
-          <div className="ml-2">
+        </div>
+        <div className="mt-2 flex">
             {arrStatusFillter.map((option) => (
               <Button
                 key={option.value}
@@ -222,7 +206,6 @@ function App() {
               </Button>
             ))}
           </div>
-        </div>
       </header>
       <>
         <Table className="mt-4" dataSource={dataSource} columns={columns} />;
