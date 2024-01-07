@@ -63,7 +63,7 @@ const OrderHistory = () => {
     });
   };
   const orderDetail = (id: string) => {
-    navigate(`/order-history/detail/65994635adc32872f164fa4b`);
+    navigate(`/order-history/detail/${id}`);
   };
   return (
     <div className="mt-6 space-y-4">

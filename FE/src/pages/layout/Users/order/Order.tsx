@@ -27,6 +27,8 @@ const Orderr = () => {
   );
   const [infoCart, setInfoCart] = useState<any>([]);
   const [address, setAddress] = useState<string>("");
+  const [phone, setPhone] = useState<string>("");
+  const [name, setName] = useState<string>("");
   const [voucherValue, setVoucherValue] = useState("");
 
   const [searchParams] = useSearchParams();
@@ -102,7 +104,7 @@ const Orderr = () => {
       status: "pending",
       products: transformedArray,
       total_price: infoCart?.totalPrice - saleMoney,
-      address: address,
+      address: JSON.stringify({'name':name,'phone':phone,"address":address}),
       total_amount_paid: 0,
       payment_type: "bank",
     };
@@ -118,8 +120,14 @@ const Orderr = () => {
   const handlePayment = () => {
     if (address == "") {
       toast.error("Vui lòng nhập địa chỉ");
+    }
+    else if (name == "") {
+      toast.error("Vui lòng nhập họ và tên người nhận");
+    }
+    else if (phone == "") {
+      toast.error("Vui lòng nhập số điẹn thoại người nhận");
     } else {
-      sessionStorage.setItem("address", address);
+      sessionStorage.setItem('address', JSON.stringify({'name':name,'phone':phone,"address":address}));
       Swal.fire({
         position: "center",
         title: "Warning",
@@ -233,25 +241,22 @@ const Orderr = () => {
           <h4 className="text-xl text-[#222]  font-bold tracking-wider my-2">
             Thông tin người đặt
           </h4>
-          <div className="flex">
-            <div className="mt-2 mr-3 w-2/4">
-              <label className="mb-3" htmlFor="">
-                Họ:
-              </label>
-              <Input value="" placeholder="Họ....." className="p-3" />
-            </div>
-            <div className="mt-2 w-2/4">
-              <label className="mb-3" htmlFor="">
-                Tên:
-              </label>
-              <Input placeholder="Tên....." className=" p-3" />
-            </div>
+          <div className="mt-2 ">
+            <label className="mb-3" htmlFor="">
+            Họ và tên:
+            </label>
+            <Input placeholder="Họ và tên:.." className=" p-3 w-full"      
+                     value={name}
+              onChange={(e) => setName(e.target.value)}/>
           </div>
           <div className="mt-2 ">
             <label className="mb-3" htmlFor="">
               Số Điện Thoại
             </label>
-            <Input placeholder="Số điện thoại.." className=" p-3 w-full" />
+            <Input placeholder="Số điện thoại.." 
+            className=" p-3 w-full"
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)} />
           </div>
 
           <div className="mt-2 ">
