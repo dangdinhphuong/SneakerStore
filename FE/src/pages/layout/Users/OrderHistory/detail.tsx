@@ -6,8 +6,8 @@ const user = userString ? JSON.parse(userString) : {};
 const OrderDetail = () => {
     const { id } = useParams<{ id: string }>(); // Get the product id from the URL parameters
     const { data: order, isLoading } = useGetOrderByIdQuery(String(id));
-    if (isLoading) return <div>Loading...</div>;
-
+        if (isLoading) return <div>Loading...</div>;
+        const receiverInformation =  JSON.parse(order.data?.address??'');
     return (
         <div className="mx-5">
             <h3 className="text-3xl text-[#17c6aa] font-bold tracking-wider my-5 mx-10">Đơn Hàng</h3>
@@ -50,10 +50,10 @@ const OrderDetail = () => {
                                         </td>
                                         <td className="whitespace-nowrap text-gray-700 py-4 px-4">{item.quantity}</td>
                                         <td className=" whitespace-nowrap  text-gray-700  text-xs lg:text-xl md:text-xl py-4 px-1 ">
-                                            {item.product.price?.toLocaleString()} vnd
+                                            {item.product.price?.toLocaleString()} vnđ
                                         </td>
                                         <td className=" whitespace-nowrap  text-gray-700  text-xs lg:text-xl md:text-xl py-4 px-1 ">
-                                            {(item.product.price * item.quantity)?.toLocaleString()} vnd
+                                            {(item.product.price * item.quantity)?.toLocaleString()} vnđ
                                         </td>
                                     </tr>
                                 ))}
@@ -76,13 +76,14 @@ const OrderDetail = () => {
                                         ? "Chờ vận chuyển"
                                         : order.data.status === "delivering"
                                             ? "Đang vận chuyển"
-                                            : order.data.status === "done"
-                                                ? "Giao hàng thành công"
-                                                : "Chờ xác nhận shop"}
+                                                                                                                                                                                                               : "Chờ xác nhận shop"}
                             </span></div>
-                            <div>Người mua: <b>{order.data?.user.fullname || ''} </b></div>
+                            <div>Người mua: <b>{receiverInformation.name || ''} </b></div>
                             <div>
-                                Địa chỉ: <b>{order.data?.address}</b>
+                                Số điẹn thoại: <b>{receiverInformation.phone || ''}</b>
+                            </div>
+                            <div>
+                                Địa chỉ: <b>{receiverInformation.address || ''}</b>
                             </div>
                             <div>Tổng tiền đơn hàng: {order.data?.total_price?.toLocaleString() || 0} vnd</div>
                         </div>
