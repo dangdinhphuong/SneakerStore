@@ -3,6 +3,7 @@ import { createBrowserRouter, RouteObject } from "react-router-dom";
 import { AdminLayout, HomePages } from "./pages/layout";
 import Product from "./components/admin/Product/Product";
 import Order from "./components/admin/order/order";
+import Detail from "./components/admin/order/detail";
 import AddProduct from "./components/admin/Product/AddProduct";
 import Size from "./components/admin/size/size";
 import AddSize from "./components/admin/size/AddSize";
@@ -329,6 +330,14 @@ export const routers = createBrowserRouter([
       },
       {
         path: "order",
+        element: <Order />,
+      },
+      {
+        path: "order/:id",
+        element: <Detail />,
+      },
+      {
+        path: "order:id",
         element: <Order />,
       },
       {

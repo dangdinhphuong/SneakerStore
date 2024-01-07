@@ -14,11 +14,13 @@ import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import Swal from "sweetalert2";
+import { useGetSizesQuery } from '@/api/sizes';
 import axios from "axios";
 const userString = localStorage.getItem("user");
 const user = userString ? JSON.parse(userString) : {};
 
 const Orderr = () => {
+  const { data: sizeData ,refetch} = useGetSizesQuery();
   const [selectedSale, setSelectedSale] = useState<ISale>({} as any);
   const [paymentMethod, setPaymentMethod] = useState<"cash" | "banking">(
     "banking"
@@ -170,8 +172,7 @@ const Orderr = () => {
         }
       });
     }
-  };
-
+  };  
   // const saleMoney = 0;
   const saleMoney = selectedSale?._id
     ? selectedSale?.type === "cash"
@@ -237,7 +238,7 @@ const Orderr = () => {
               <label className="mb-3" htmlFor="">
                 Họ:
               </label>
-              <Input placeholder="Họ....." className="p-3" />
+              <Input value="" placeholder="Họ....." className="p-3" />
             </div>
             <div className="mt-2 w-2/4">
               <label className="mb-3" htmlFor="">
