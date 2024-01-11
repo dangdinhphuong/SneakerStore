@@ -165,8 +165,38 @@ export const getAll = async (req, res) => {
 
     export const updateStatus = async (req, res, next) => {
         try {
-            const posts = await Orders.findByIdAndUpdate(req.params.id, req.body, {new: true});
+            let order = await Orders.findOne({_id: req.params.id}).lean();
 
+            for (const product of order.products) {
+                const {product_id, color, size, quantity} = product;
+                const existingProduct = await Product.findById(product_id);
+
+                if (!existingProduct) {
+                    return res.status(404).json({
+                        error: true,
+                        message: `Không tìm thấy san phẩm ${existingProduct.name}`,
+                    });
+                }
+                const quantityInfoIndex = existingProduct.listQuantityRemain.findIndex(
+                    (item) => item.colorHex === color && item.nameSize === size
+                );
+                existingProduct.listQuantityRemain[quantityInfoIndex].quantity += quantity;
+
+                // Tạo một bản sao của listQuantityRemain để cập nhật mảng
+                const updatedListQuantityRemain = [...existingProduct.listQuantityRemain];
+                updatedListQuantityRemain[quantityInfoIndex] = {
+                    ...updatedListQuantityRemain[quantityInfoIndex],
+                    quantity: existingProduct.listQuantityRemain[quantityInfoIndex].quantity,
+                };
+
+                await Product.findByIdAndUpdate(
+                    product_id,
+                    {$set: {listQuantityRemain: updatedListQuantityRemain}},
+                    {new: true}
+                );
+
+            }
+            const posts = await Orders.findByIdAndUpdate(req.params.id, req.body, {new: true});
             return res.status(200).json({
                 message: "Update order successfully",
                 data: posts,
