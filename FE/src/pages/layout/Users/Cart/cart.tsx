@@ -23,7 +23,7 @@ const Cart = () => {
   const user = userString ? JSON.parse(userString) : {};
   const isLoggedIn = Object.keys(user).length > 0;
 
-  const handleRemove = (id: string) => {
+  const handleRemove = (index: number) => {
     Swal.fire({
       position: "center",
       title: "Warning",
@@ -35,9 +35,9 @@ const Cart = () => {
       denyButtonText: "Cancel",
     }).then((result) => {
       if (result.isConfirmed) {
-        dispatch(removeProductToCart(id));
-        const cartAfter = carts.filter((item: any) => {
-          return item._id !== id;
+        dispatch(removeProductToCart(index));
+        const cartAfter = carts.filter((item: any , ind: number) => {
+          return ind !== index;
         });
         setCarts(cartAfter);
       }
@@ -232,7 +232,7 @@ const Cart = () => {
                           onChange={handleCheckboxChange}
                         />
                       </td>
-                      <td className="whitespace-nowrap font-medium text-gray-900 flex text-left py-4">
+                      <td style={{width: 120}} className="whitespace-nowrap font-medium text-gray-900 flex text-left py-4">
                         <div className="relative">
                           <img
                             src={cart.product.image[0]}
@@ -266,9 +266,7 @@ const Cart = () => {
                         <span className="gap-3 text-xs lg:text-base md:text-xl">
                           Kích cỡ :
                           {
-                            cart.product.listQuantityRemain?.find(
-                              (item) => item.color === cart.color
-                            )?.nameSize
+                            cart.nameSize
                           }
                         </span>
                       </td>
@@ -309,7 +307,7 @@ const Cart = () => {
 
                       <td className="whitespace-nowrap cursor-pointer text-gray-700  text-xs lg:text-xl  md:text-xl px-4 py-4 ">
                         <BsFillTrash3Fill
-                          onClick={() => handleRemove(cart._id)}
+                          onClick={() => handleRemove(index)}
                         />
                       </td>
                     </tr>
