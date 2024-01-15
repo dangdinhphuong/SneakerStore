@@ -418,9 +418,7 @@ const Orderr = () => {
                       <span className="  gap-3 text-xs lg:text-base md:text-xl">
                         Size:{" "}
                         {
-                          cart.product.listQuantityRemain?.find(
-                            (item) => item.color === cart.color
-                          )?.nameSize
+                          cart.nameSize
                         }
                       </span>
                     </td>
