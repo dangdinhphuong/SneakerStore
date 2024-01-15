@@ -56,10 +56,10 @@ const Payment = () => {
             "user_id": user?._id,
             "status": "pending", // Bạn có thể bỏ qua trường này để sử dụng giá trị mặc định "pending"
             "products": transformedArray,
-            "total_price": handleToTalCart().totalPrice,
+            "total_price": searchParams.get("amount"),
             "address": sessionStorage.getItem("address") ?? "Địa chỉ của bạn",
             "sale_id": "6555018adbb1621a26e79a3e",
-            "total_amount_paid": handleToTalCart().totalPrice,
+            "total_amount_paid": searchParams.get("amount"),
             "payment_type": "bank",
         };
         return dataCreateCart;
@@ -79,8 +79,8 @@ const Payment = () => {
             carts &&
             carts.length > 0 &&
             paymentOrderOne &&
-            searchParams.get("vnp_ResponseCode") &&
-            searchParams.get("vnp_ResponseCode") == "00") {
+            searchParams.get("resultCode") &&
+            searchParams.get("resultCode") == "0") {
            const dataCreateOrder = formatPaymentOrder();
            createOrder(dataCreateOrder);
             console.log('createOrder(dataCreateOrder);', dataCreateOrder,carts)
@@ -102,7 +102,7 @@ const Payment = () => {
 
     useEffect(() => {
         const handleNewBooking = async () => {
-            
+
 
         };
         handleNewBooking();

@@ -47,7 +47,7 @@ const Orderr = () => {
 
     // Kiểm tra nếu expirationDate lớn hơn hoặc bằng ngày hiện tại và usageLimit lớn hơn 0
     return expirationDate >= currentDate && item.usageLimit > 0;
-}) ?? []; 
+}) ?? [];
   const handlePickSale = (sale: ISale) => {
     console.log('sale',sale);
     // if (selectedSale?._id === sale._id) return setSelectedSale({} as any);
@@ -151,15 +151,13 @@ const Orderr = () => {
           if (result.isConfirmed) {
             if (paymentMethod === "banking") {
               const infoBanking = {
-                vnp_OrderInfo: "Thanh toán đơn hàng",
-                totalPrice: infoCart?.totalPrice - saleMoney || 0,
-                bank_code: "",
-                language: "vn",
-                // Mấy bạn lấy userId lúc đăng nhập truyên vào
-                user: "6533936415fe0386e84bf4b9",
+                request_type: "payWithATM",
+                money: infoCart?.totalPrice - saleMoney || 0,
+                redirectUrl: "http://localhost:5173/payment",
               };
               const result = await createPaymentUrl(infoBanking);
-              window.open(result.data.url_redirect, "_self");
+              console.log("result",result.data.payUrl)
+              window.open(result.data.payUrl, "_self");
             }
 
             if (paymentMethod == "cash") {
@@ -189,7 +187,7 @@ const Orderr = () => {
         }
       });
     }
-  };  
+  };
   // const saleMoney = 0;
   const saleMoney = selectedSale?._id
     ? selectedSale?.type === "cash"
@@ -254,7 +252,7 @@ const Orderr = () => {
             <label className="mb-3" htmlFor="">
             Họ và tên:
             </label>
-            <Input placeholder="Họ và tên:.." className=" p-3 w-full"      
+            <Input placeholder="Họ và tên:.." className=" p-3 w-full"
                      value={name}
               onChange={(e) => setName(e.target.value)}/>
           </div>
@@ -262,7 +260,7 @@ const Orderr = () => {
             <label className="mb-3" htmlFor="">
               Số Điện Thoại
             </label>
-            <Input placeholder="Số điện thoại.." 
+            <Input placeholder="Số điện thoại.."
             className=" p-3 w-full"
               value={phone}
               onChange={(e) => setPhone(e.target.value)} />

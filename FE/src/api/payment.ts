@@ -23,7 +23,7 @@ export default paymentApi;
 
 export const createPaymentUrl = (data: any) => {
     return axios({
-        url: "http://localhost:8080/api/vnpay/create-url",
+        url: "https://maket-tmdt-d58d5f285237.herokuapp.com/api/recharge-momo",
         method: "POST",
         data,
     });
