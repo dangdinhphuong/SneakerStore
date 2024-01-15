@@ -28,7 +28,7 @@ const cartSlice = createSlice({
             );
         },
         removeProductToCart: (state, action: PayloadAction<string>) => {
-            state.cart = [...state.cart].filter((item) => item._id !== action.payload);
+            state.cart = [...state.cart].filter((item , index) => index != action.payload);
             state.quantity = state.cart.length;
         },
         removeMultiplePrdCart: (state, action: PayloadAction<string[]>) => {
