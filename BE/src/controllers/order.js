@@ -225,7 +225,7 @@ export const getAll = async (req, res) => {
 
                 // Kiểm tra logic xử lý số lượng còn lại tại đây nếu cần
                 const quantityInfoIndex = existingProduct.listQuantityRemain.findIndex(
-                    (item) => item.colorHex === color && item.nameSize === size
+                    (item) => item.nameColor === color && item.nameSize === size
                 );
 
                 if (quantityInfoIndex === -1 || existingProduct.listQuantityRemain[quantityInfoIndex].quantity < quantity) {

@@ -25,7 +25,7 @@ const Orderr = () => {
   const [paymentMethod, setPaymentMethod] = useState<"cash" | "banking">(
     "banking"
   );
-  const [infoCart, setInfoCart] = useState<any>([]);
+  const [infoCart, setInfoCart] = useState<any>(JSON.parse(sessionStorage.getItem("infoPayment") || ""));
   const [address, setAddress] = useState<string>("");
   const [phone, setPhone] = useState<string>("");
   const [name, setName] = useState<string>("");
@@ -98,12 +98,13 @@ const Orderr = () => {
       }
     }
   };
-  const formatPaymentOrder = () => {
+  
+  const formatPaymentOrder = (infoCart) => {
     let transformedArray = infoCart?.cartSelected.map((item) => {
       return {
         product_id: item.product._id,
-        color: item.product.listQuantityRemain[0].colorHex,
-        size: item.product.listQuantityRemain[0].nameSize,
+        color: item.nameColor,
+        size: item.nameSize,
         quantity: item.quantity,
       };
     });
@@ -112,7 +113,7 @@ const Orderr = () => {
       user_id: user._id ?? "",
       status: "pending",
       products: transformedArray,
-      total_price: infoCart?.totalPrice - saleMoney,
+      total_price: Number(infoCart?.totalPrice - saleMoney),
       address: JSON.stringify({'name':name,'phone':phone,"address":address}),
       total_amount_paid: 0,
       payment_type: "bank",
@@ -161,10 +162,10 @@ const Orderr = () => {
             }
 
             if (paymentMethod == "cash") {
-              const dataCreateOrder = formatPaymentOrder();
+              const dataCreateOrder = formatPaymentOrder(infoCart);              
               console.log("infoCart?.cartSelected2", dataCreateOrder);
               const response = await newOrder(dataCreateOrder as any).unwrap();
-              console.log("infoCart?.cartSelected2", response);
+              console.log(response);
               if (response) {
                 dispatch(
                   removeMultiplePrdCart(
